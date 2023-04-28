@@ -1,0 +1,3 @@
+#!/bin/bash
+./out /home/jossian/instancia/qkp/100/100_25_8.txt -eq_ln_on -eq_mochquad -eq_extender_bc
+# ./out /local/jossian/instancia/qkp/80/80_75_2.txt -eq_ln_on -eq_mochquad -sep_cover_dinam -sep_lift_dinam -eq_lift_bc

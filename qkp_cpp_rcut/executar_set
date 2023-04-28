@@ -1,0 +1,13 @@
+#!/bin/bash
+for tam in 100
+do
+    echo "instance;opt;lb;ub;nf;no;t(s)" >> saida.txt
+    for dens in 25 50 75 100
+    do
+	for id in $(seq 10)
+	do
+	    ./out qkp_instances/${tam}/${tam}_${dens}_${id}.txt -guloso_bl >> prints/${tam}_${dens}_${id}.txt
+	done
+    done
+    mv saida.txt results/${tam}.txt
+done

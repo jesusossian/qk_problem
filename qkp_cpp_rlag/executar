@@ -1,0 +1,14 @@
+#!/bin/bash
+for tam in 100
+do
+    echo "instance;opt;lb;ub;nf;no;t(s)" >> saida.txt
+    for dens in 25 50 75 100
+    do
+	for id in $(seq 10)
+	do
+	    ./out /local/jossian/instancia/qkp/${tam}/${tam}_${dens}_${id}.txt >> saida/${tam}.txt
+	    rm saida/*
+	done
+    done
+    mv saida.txt resultados/${tam}.txt
+done

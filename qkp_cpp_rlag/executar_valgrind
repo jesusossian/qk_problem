@@ -1,0 +1,2 @@
+#!/bin/bash
+valgrind -v --tool=memcheck --leak-check=yes ./out /local/jossian/instancia/qkp/20/20_25_1.txt

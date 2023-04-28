@@ -1,0 +1,2 @@
+#!/bin/bash
+./out ../../instances/knapsack/jeu/100/jeu_100_50_4.txt

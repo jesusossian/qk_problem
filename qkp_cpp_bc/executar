@@ -1,0 +1,15 @@
+#!/bin/bash
+for tam in 20 40 60 80 100 120
+do
+    echo "instance;opt;lb;ub;#x;#y;cut;no;t(s)" >> saida.txt
+    for dens in 25 50 75 100
+    do
+	for id in $(seq 10)
+	do
+	    ./out /local/jossian/instancia/qkp/${tam}/${tam}_${dens}_${id}.txt -eq_ln_on -eq_mochquad -sep_cover_xpress -eq_extender_bc -proc_fixax -proc_fixay >> saida/${tam}_${dens}_${id}.txt
+	done
+	rm saida/*
+	rm log*
+    done
+    mv saida.txt resultados/${tam}_ln_extender_fixa.txt
+done

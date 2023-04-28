@@ -1,0 +1,3 @@
+#!/bin/bash
+valgrind -v --tool=memcheck --leak-check=yes  --show-reachable=yes ./out /home/jossian/instancia/qkp/10/10_25_2.txt -eq_ln_on -eq_mochquad
+

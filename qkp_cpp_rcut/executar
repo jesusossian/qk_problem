@@ -1,0 +1,8 @@
+#!/bin/bash
+
+tam=100
+dens=50
+id=1
+parametro=guloso_bl # hbillionnet
+
+./out qkp_instances/${tam}/${tam}_${dens}_${id}.txt -${parametro}
