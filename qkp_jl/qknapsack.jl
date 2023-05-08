@@ -15,6 +15,8 @@ import Formulations
 import Heuristics
 import BranchAndCut
 
+# julia qknapsack.jl --inst AAAA --form BBBB 
+ 
 # Read the parameters from command line
 params = Parameters.readInputParameters(ARGS)
 
@@ -26,7 +28,8 @@ if params.form == "std"
 elseif params.form == "linear"
    Formulations.linearFormulation(inst, params)
 elseif params.form == "greedy"
-   Heuristics.greedy(inst, params)
+   xp = Heuristics.greedy(inst, params)
+   println(xp)
 elseif params.form == "bc"
    BranchAndCut.callbackCutsQkp(inst, params)
 elseif params.form == "cbheur"

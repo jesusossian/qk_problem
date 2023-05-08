@@ -186,6 +186,8 @@ function greedy(inst::InstanceData, params::ParameterData)
   
     lbmax = localsearch(inst, params, x, lb)
 
+    return x
+
 end
 
 function callbackHeuristic(inst::InstanceData, params::ParameterData)
@@ -238,7 +240,15 @@ function callbackHeuristic(inst::InstanceData, params::ParameterData)
 
   MOI.set(model, MOI.HeuristicCallback(), heur_callback_function)
 
-  optimize!(model)
+  status = optimize!(model)
+
+  opt = 0
+  if termination_status(model) == MOI.OPTIMAL    
+    println("status = ", termination_status(model))
+    opt = 1
+  else
+    println("status = ", termination_status(model))
+  end
 
   bestsol = objective_value(model)
   bestbound = objective_bound(model)
@@ -247,12 +257,12 @@ function callbackHeuristic(inst::InstanceData, params::ParameterData)
   gap = MOI.get(model, MOI.RelativeGap())
 
   open("saida.txt","a") do f
-    write(f,"$(params.instName);$(params.form);$bestbound;$bestsol;$gap;$time;$numnodes;$(params.disablesolver) \n")
+    write(f,"$(params.instName);$(params.form);$bestbound;$bestsol;$gap;$time;$numnodes;$opt \n")
   end
 
-  if params.printsol == 1
-    printStandardFormulationSolution(inst,x)
-  end
+  #if params.printsol == 1x
+  #  printStandardFormulationSolution(inst,x)
+  #end
 
 end 
  

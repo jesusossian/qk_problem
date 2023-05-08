@@ -1,11 +1,15 @@
 module BranchAndCut
 
+#import MathOptInterface as MOI
+
 using JuMP
 using Gurobi
 using CPLEX
 using Data
 using Parameters
 using LinearAlgebra
+
+import Heuristics
 
 mutable struct stdFormVars
   x
@@ -96,8 +100,10 @@ function callbackCutsQkp(inst::InstanceData, params::ParameterData)
     y_vals = callback_value.(Ref(cb_data), y)
     for i=1:N
       for j=(i+1):N
-        if (x_vals[i] + x_vals[j] > 1 + y_vals[i,j]) 
-          con = @build_constraint(x[i] + x[j] <= 1 + y[i,j])
+        if (x_vals[i] + x_vals[j] > 1 + y_vals[i,j] + 1e-6) 
+          con = @build_constraint(
+            x[i] + x[j] <= 1 + y[i,j]
+          )
           println("Adding $(con)")
           MOI.submit(model, MOI.UserCut(cb_data), con)
         end
@@ -110,19 +116,19 @@ function callbackCutsQkp(inst::InstanceData, params::ParameterData)
     lazy_called = true
     x_vals = callback_value.(Ref(cb_data), x)
     y_vals = callback_value.(Ref(cb_data), y)
-    #status = callback_node_status(cb_data, model)
-    #if status == MOI.CALLBACK_NODE_STATUS_FRACTIONAL
-    #  println(" - Solution is integer infeasible!")
-    #elseif status == MOI.CALLBACK_NODE_STATUS_INTEGER
-    #  println(" - Solution is integer feasible!")
-    #else
-    #  @assert status == MOI.CALLBACK_NODE_STATUS_UNKNOWN
-    #  println(" - I don't know if the solution is integer feasible :(")
-    #end
+    status_l = callback_node_status(cb_data, model)
+    if status_l == MOI.CALLBACK_NODE_STATUS_FRACTIONAL
+      println(" - Solution is integer infeasible!")
+    elseif status_l == MOI.CALLBACK_NODE_STATUS_INTEGER
+      println(" - Solution is integer feasible!")
+    else
+      @assert status_l == MOI.CALLBACK_NODE_STATUS_UNKNOWN
+      println(" - I don't know if the solution is integer feasible :(")
+    end
     for i=1:N
       for j=(i+1):N
         if (x_vals[i] + x_vals[j] > 1 + y_vals[i,j]) 
-          con = @build_constraint(x[i] + x[j] <= 1 + y[i,j])
+          con = @build_constraint(x[i] + x[j] <= 1 + y[i,j] + 1e-6)
           println("Adding $(con)")
           MOI.submit(model, MOI.LazyConstraint(cb_data), con)
         end
@@ -130,10 +136,29 @@ function callbackCutsQkp(inst::InstanceData, params::ParameterData)
     end
   end
 
+  
+  callback_called = false
+  function heur_callback_function(cb_data)
+    callback_called = true
+    x_vals = Heuristics.greedy(inst, params)
+    #x_vals = callback_value.(Ref(cb_data), x)
+    status_h = MOI.submit(model, MOI.HeuristicSolution(cb_data), x, x_vals)
+    println("Heuristic solution status = $(status_h)")
+  end
+  
   #MOI.set(model, MOI.UserCutCallback(), cut_callback_function)
-  MOI.set(model, MOI.LazyConstraintCallback(), lazy_callback_function)
+  #MOI.set(model, MOI.LazyConstraintCallback(), lazy_callback_function)
+  MOI.set(model, MOI.HeuristicCallback(), heur_callback_function)
 
-  optimize!(model)
+  status = optimize!(model)
+
+  opt = 0
+  if termination_status(model) == MOI.OPTIMAL    
+    println("status = ", termination_status(model))
+    opt = 1
+  else
+    println("status = ", termination_status(model))
+  end
 
   bestsol = objective_value(model)
   bestbound = objective_bound(model)
@@ -142,13 +167,13 @@ function callbackCutsQkp(inst::InstanceData, params::ParameterData)
   gap = MOI.get(model, MOI.RelativeGap())
 
   open("saida.txt","a") do f
-    write(f,"$(params.instName);$(params.form);$bestbound;$bestsol;$gap;$time;$numnodes;$(params.disablesolver) \n")
+    write(f,"$(params.instName);$(params.form);$bestbound;$bestsol;$gap;$time;$numnodes;$opt \n")
   end
 
   #if params.printsol == 1
   #  printStandardFormulationSolution(inst,x)
   #end
 
-end #function standardFormulation()
+end
 
 end

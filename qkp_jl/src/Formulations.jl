@@ -75,16 +75,29 @@ function stdFormulation(inst::InstanceData, params::ParameterData)
   @variable(model, x[i=1:N], Bin)
 
   ### Objective function ###
-  @objective(model, Max, sum(inst.P[i,i]*x[i] for i=1:N)
-  + sum(inst.P[i,j]*x[i]*x[j] for i=1:N, j=(i+1):N)
+  @objective(model, Max, 
+  sum(inst.P[i,i]*x[i] for i=1:N) + 
+  sum(inst.P[i,j]*x[i]*x[j] for i=1:N, j=(i+1):N)
   )
 
   ### knapsack constraints ###
   @constraint(model, knapsack, sum(inst.W[i]*x[i] for i=1:N) <= inst.C)
 
+  if params.method == "lp"
+    undo_relax = relax_integrality(model)
+  end
+
   #writeLP(model,"modelo.lp",genericnames=false)
 
-  optimize!(model)
+  status = optimize!(model)
+
+  opt = 0
+  if termination_status(model) == MOI.OPTIMAL    
+    println("status = ", termination_status(model))
+    opt = 1
+  else
+    println("status = ", termination_status(model))
+  end
 
   bestsol = objective_value(model)
   bestbound = objective_bound(model)
@@ -93,7 +106,7 @@ function stdFormulation(inst::InstanceData, params::ParameterData)
   gap = MOI.get(model, MOI.RelativeGap())
 
   open("saida.txt","a") do f
-    write(f,"$(params.instName);$(params.form);$bestbound;$bestsol;$gap;$time;$numnodes;$(params.disablesolver) \n")
+    write(f,"$(params.instName);$(params.form);$bestbound;$bestsol;$gap;$time;$numnodes;$opt \n")
   end
 
   #if params.printsol == 1
@@ -176,9 +189,21 @@ function linearFormulation(inst::InstanceData, params::ParameterData)
   @constraint(model, linj[i=1:inst.N, j=(i+1):N], y[i,j] <= x[j])
   @constraint(model, linij[i=1:inst.N, j=(i+1):N], x[i] + x[j] <= 1 + y[i,j])
 	
+  if params.method == "lp"
+    undo_relax = relax_integrality(model)
+  end
+
   #writeLP(model,"modelo.lp",genericnames=false)
 
-  optimize!(model)
+  status = optimize!(model)
+
+  opt = 0
+  if termination_status(model) == MOI.OPTIMAL    
+    println("status = ", termination_status(model))
+    opt = 1
+  else
+    println("status = ", termination_status(model))
+  end
 
   bestsol = objective_value(model)
   bestbound = objective_bound(model)
@@ -187,7 +212,7 @@ function linearFormulation(inst::InstanceData, params::ParameterData)
   gap = MOI.get(model, MOI.RelativeGap())
 
   open("saida.txt","a") do f
-    write(f,"$(params.instName);$(params.form);$bestbound;$bestsol;$gap;$time;$numnodes;$(params.disablesolver) \n")
+    write(f,"$(params.instName);$(params.form);$bestbound;$bestsol;$gap;$time;$numnodes;$opt \n")
   end
 
   #if params.printsol == 1
