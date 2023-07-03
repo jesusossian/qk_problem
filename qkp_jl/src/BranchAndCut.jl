@@ -23,22 +23,36 @@ function callbackCutsQkp(inst::InstanceData, params::ParameterData)
   if params.solver == "gurobi"
     model = Model(Gurobi.Optimizer)
     #set_optimizer_attribute(model, "NonConvex", 2)
+    
     set_optimizer_attribute(model, "TimeLimit", params.maxtime) # Time limit
-    set_optimizer_attribute(model, "MIPGap", params.tolgap) # Relative MIP optimality gap
+    set_optimizer_attribute(model, "MIPGap", params.tolgap) 
+    # Relative MIP optimality gap
+    
     #set_optimizer_attribute(model, "NodeLimit", params.maxnodes) # MIP node limit
-    #set_optimizer_attribute(model, "Cuts", 0) # Global cut aggressiveness setting. 
-    # Use value 0 to shut off cuts, 1 for moderate cut generation, 2 for aggressive cut generation, and 3 for very aggressive cut generation. 
+    
+    #set_optimizer_attribute(model, "Cuts", 0) 
+    # Global cut aggressiveness setting. 
+    # Use value 0 to shut off cuts, 
+    # 1 for moderate cut generation, 
+    # 2 for aggressive cut generation, and 
+    # 3 for very aggressive cut generation. 
     # This parameter is overridden by the parameters that control individual cut types (e.g., CliqueCuts).
     # Only affects mixed integer programming (MIP) models
-    #set_optimizer_attribute(model, "PreCrush", 1) # Controls presolve reductions that affect user cuts
-    #set_optimizer_attribute(model, "VarBranch", -1) # Controls the branch variable selection strategy. 
+    
+    #set_optimizer_attribute(model, "PreCrush", 1) 
+    # Controls presolve reductions that affect user cuts
+    
+    #set_optimizer_attribute(model, "VarBranch", -1) 
+    # Controls the branch variable selection strategy. 
     # The default -1 setting makes an automatic choice, depending on problem characteristics. 
     # Available alternatives are:
     # Pseudo Reduced Cost Branching (0), 
     # Pseudo Shadow Price Branching (1), 
     # Maximum Infeasibility Branching (2), and 
     # Strong Branching (3).
-    #set_optimizer_attribute(model, "NodeMethod", -1) # Method used to solve MIP node relaxations
+    
+    #set_optimizer_attribute(model, "NodeMethod", -1) 
+    # Method used to solve MIP node relaxations
     # Algorithm used for MIP node relaxations (except for the root node, see Method). 
     # Options are: 
     # -1=automatic, 
@@ -46,15 +60,21 @@ function callbackCutsQkp(inst::InstanceData, params::ParameterData)
     # 1=dual simplex, and 
     # 2=barrier. 
     # Note that barrier is not an option for MIQP node relaxations.
+    
     #set_optimizer_attribute(model, "BranchDir", -1) # Preferred branch direction
     # Determines which child node is explored first in the branch-and-cut search. 
     # The default value chooses automatically. 
-    # A value of -1 will always explore the down branch first, while a value of 1 will always explore the up branch first.
+    # A value of -1 will always explore the down branch first, 
+    # while a value of 1 will always explore the up branch first.
+    
     #set_optimizer_attribute(model, "Presolve", -1) # Controls the presolve level
     # A value of -1 corresponds to an automatic setting. 
     # Other options are off (0), conservative (1), or aggressive (2). 
-    # More aggressive application of presolve takes more time, but can sometimes lead to a significantly tighter model.
-    #set_optimizer_attribute(model, "Method", -1) # Algorithm used to solve continuous models or the root node of a MIP model. 
+    # More aggressive application of presolve takes more time, 
+    # but can sometimes lead to a significantly tighter model.
+    
+    #set_optimizer_attribute(model, "Method", -1) 
+    # Algorithm used to solve continuous models or the root node of a MIP model. 
     # Options are: 
     # -1=automatic, 
     # 0=primal simplex, 
@@ -63,10 +83,12 @@ function callbackCutsQkp(inst::InstanceData, params::ParameterData)
     # 3=concurrent, 
     # 4=deterministic concurrent, 
     # 5=deterministic concurrent simplex.
+    
     set_optimizer_attribute(model, "Threads", 1)
     # Controls the number of threads to apply to parallel algorithms.
     # The default value of 0 is an automatic setting. 
     # It will generally use all of the cores in the machine, but it may choose to use fewer.
+    
   elseif params.solver == "cplex"
     model = Model(Cplex.Optimizer)
   else
@@ -94,8 +116,9 @@ function callbackCutsQkp(inst::InstanceData, params::ParameterData)
 	
   #writeLP(model,"modelo.lp",genericnames=false)
 
+  cut_called = false
   function cut_callback_function(cb_data)
-    callback_called = true
+    cut_called = true
     x_vals = callback_value.(Ref(cb_data), x)
     y_vals = callback_value.(Ref(cb_data), y)
     for i=1:N

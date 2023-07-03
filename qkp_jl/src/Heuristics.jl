@@ -204,7 +204,7 @@ function callbackHeuristic(inst::InstanceData, params::ParameterData)
     set_optimizer_attribute(model, "NodeMethod", -1) # Method used to solve MIP node relaxations
     set_optimizer_attribute(model, "BranchDir", -1) # Preferred branch direction
     set_optimizer_attribute(model, "Presolve", -1) # Controls the presolve level
-    set_optimizer_attribute(model, "Method", -1) # Algorithm used to solve continuous models or the root node of a MIP model. 
+    set_optimizer_attribute(model, "Method", -1) # Algorithm used to solve MIP root relaxations. 
     set_optimizer_attribute(model, "Threads", 1) # Controls the number of threads.
   elseif params.solver == "Cplex"
     model = Model(Cplex.Optimizer)
