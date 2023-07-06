@@ -17,8 +17,8 @@ export ParameterData, readInputParameters
 function readInputParameters(ARGS)
 
     ### Set standard values for the parameters ###
-    instName="../instances/50/50_100_1.txt"
-    form="bc"
+    instName = "../instances/50/50_100_1.txt"
+    form = "cbLazy"
     solver = "gurobi"
     maxtime = 3600
     tolgap = 1e-6

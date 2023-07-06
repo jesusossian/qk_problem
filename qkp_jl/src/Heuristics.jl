@@ -114,10 +114,10 @@ function localSearch(inst::InstanceData, params::ParameterData, xprime, lbmax)
   
     if (gain > lbmax)
         lbmax = gain
-        #for i=1:inst.N xstar[i] = xprime[i];
+        #for i=1:N xstar[i] = xprime[i]
     end
   
-    #println("lbmax = ",lbmax)
+    println("lbmax = ", lbmax)
 
 end
 
@@ -184,7 +184,7 @@ function greedy(inst::InstanceData, params::ParameterData)
 
     # println("lb = ",lb)
   
-    lbmax = localsearch(inst, params, x, lb)
+    lbmax = localSearch(inst, params, x, lb)
 
     return x
 

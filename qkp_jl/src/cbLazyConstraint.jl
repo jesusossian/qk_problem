@@ -8,7 +8,6 @@ using Parameters
 using LinearAlgebra
 
 #import MathOptInterface as MOI
-
 mutable struct stdFormVars
     x
     y  
@@ -64,22 +63,23 @@ function callBackLazyConstraint(inst::InstanceData, params::ParameterData)
         lazy_called = true
         x_vals = callback_value.(Ref(cb_data), x)
         y_vals = callback_value.(Ref(cb_data), y)
-        #status_l = callback_node_status(cb_data, model)
-        #if status_l == MOI.CALLBACK_NODE_STATUS_FRACTIONAL
+        status = callback_node_status(cb_data, model)
+        #if status == MOI.CALLBACK_NODE_STATUS_FRACTIONAL
         #    println(" - Solution is integer infeasible!")
-        #elseif status_l == MOI.CALLBACK_NODE_STATUS_INTEGER
+        #elseif status == MOI.CALLBACK_NODE_STATUS_INTEGER
         #    println(" - Solution is integer feasible!")
         #else
-        #    @assert status_l == MOI.CALLBACK_NODE_STATUS_UNKNOWN
+        #    @assert status == MOI.CALLBACK_NODE_STATUS_UNKNOWN
         #    println(" - I don't know if the solution is integer feasible :(")
         #end
 
         for i=1:N
             for j=(i+1):N
-                if (x_vals[i] + x_vals[j] > 1 + y_vals[i,j] + y[i,j] + 1e-6) 
-                    con = @build_constraint(x[i] + x[j] <= 1)
+                if (x_vals[i] + x_vals[j] > 1 + y_vals[i,j] + 1e-6) 
+                    con = @build_constraint(x[i] + x[j] <= 1 + y[i,j])
                     #println("Adding $(con)")
                     MOI.submit(model, MOI.LazyConstraint(cb_data), con)
+                    #MOI.submit(model, MOI.LazyConstraint(cb_data), con)
                 end
             end
         end
