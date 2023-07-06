@@ -12,112 +12,112 @@ mutable struct stdFormVars
   y  
 end
 
-export stdFormVars, greedy, localsearch, callbackHeuristic
+export stdFormVars, greedy, localSearch #, cbHeuristic
 
-function localsearch(inst::InstanceData, params::ParameterData, xprime, lbmax)
+function localSearch(inst::InstanceData, params::ParameterData, xprime, lbmax)
 
-  N = inst.N 
+    N = inst.N 
 
-  q = zeros(N)
-  res = inst.C
+    q = zeros(N)
+    res = inst.C
 
-  for i=1:N
-    if (xprime[i]==1) 
-      res -= inst.W[i]
-    end
-  end
-  
-  while (res >= 0)
     for i=1:N
-      tot = inst.P[i,i]
-      # println("tot = ", tot)
-      for j=1:inst.N
-	      if ((j != i) && (xprime[j] != 0)) 
-	        tot += inst.P[i,j] + inst.P[j,i]
+        if (xprime[i]==1) 
+            res -= inst.W[i]
         end
-      end
-      q[i] = tot;
     end
+  
+    while (res >= 0)
+        for i=1:N
+            tot = inst.P[i,i]
+            # println("tot = ", tot)
+            for j=1:N
+	            if ((j != i) && (xprime[j] != 0)) 
+	                tot += inst.P[i,j] + inst.P[j,i]
+                end
+            end
+            q[i] = tot;
+        end
     
-    bgain = gaini = gainj = 0;
-    for i=1:N
-      if (xprime[i] == 0)
-        if (inst.W[i] <= res)
-	        gain = q[i]
-          if (gain > bgain)
-	          bgain = gain
-            gaini = i
-            gainj = -1
-          end
-	      else
-	        for j=1:N
-	          if (j == i) 
-              continue
+        bgain = gaini = gainj = 0;
+        for i=1:N
+            if (xprime[i] == 0)
+                if (inst.W[i] <= res)
+	                gain = q[i]
+                    if (gain > bgain)
+	                    bgain = gain
+                        gaini = i
+                        gainj = -1
+                    end
+	            else
+	                for j=1:N
+	                    if (j == i) 
+                            continue
+                        end
+	                    if (xprime[j] == 0) 
+                            continue
+                        end
+	                    if (inst.W[i] - inst.W[j] <= res)
+	                        gain = q[i] - q[j] - (inst.P[i,j] + inst.P[j,i])
+	                        if (gain > bgain)
+	                            bgain = gain; gaini = i; gainj = j;
+                            end
+                        end
+                    end
+                end
             end
-	          if (xprime[j] == 0) 
-              continue
-            end
-	          if (inst.W[i] - inst.W[j] <= res)
-	            gain = q[i] - q[j] - (inst.P[i,j] + inst.P[j,i])
-	            if (gain > bgain)
-	              bgain = gain; gaini = i; gainj = j;
-              end
-            end
-          end
         end
-      end
-    end
   
-    if (bgain == 0) 
-      break
-    end
+        if (bgain == 0) 
+            break
+        end
 
-    xprime[gaini] = 1
+        xprime[gaini] = 1
 
-    if (gainj != -1) 
-      xprime[gainj] = 0
-    end
+        if (gainj != -1) 
+            xprime[gainj] = 0
+        end
 
-    if (gainj != -1) 
-      res += inst.W[gainj] - inst.W[gaini]
-    else 
-      res -= w[gaini]
-    end
+        if (gainj != -1) 
+            res += inst.W[gainj] - inst.W[gaini]
+        else 
+            res -= w[gaini]
+        end
 
-    if (res < 0) 
-      printf("error\n")
-      exit(-1)
+        if (res < 0) 
+            printf("error\n")
+            exit(-1)
+        end
+  
+    end # end of while loop
+  
+    gain = 0
+    res = inst.C
+    for i=1:N
+        if (xprime[i] == 0)
+            continue
+        end
+        res -= inst.W[i];
+        for j=1:N
+            if (xprime[j]==1)
+                gain += inst.P[i,j]
+            end
+        end
     end
   
-  end # end of while loop
-  
-  gain = 0
-  res = inst.C
-  for i=1:N
-    if (xprime[i] == 0)
-      continue
+    if (res < 0)
+        printf("error \n")
+        exit(-1)
     end
-    res -= inst.W[i];
-    for j=1:inst.N
-      if (xprime[j]==1)
-        gain += inst.P[i,j]
-      end
+  
+    #println("possible solution", gain)
+  
+    if (gain > lbmax)
+        lbmax = gain
+        #for i=1:inst.N xstar[i] = xprime[i];
     end
-  end
   
-  if (res < 0)
-    printf("error \n")
-    exit(-1)
-  end
-  
-  # println("possible solution", gain)
-  
-  if (gain > lbmax)
-    lbmax = gain
-    #for i=1:inst.N xstar[i] = xprime[i];
-  end
-  
-  # println("lbmax = ",lbmax)
+    #println("lbmax = ",lbmax)
 
 end
 
@@ -190,81 +190,81 @@ function greedy(inst::InstanceData, params::ParameterData)
 
 end
 
-function callbackHeuristic(inst::InstanceData, params::ParameterData)
+#function cbHeuristic(inst::InstanceData, params::ParameterData)
 
-  if params.solver == "Gurobi"
-    model = Model(Gurobi.Optimizer)
-    #set_optimizer_attribute(model, "NonConvex", 2)
-    set_optimizer_attribute(model, "TimeLimit", params.maxtime) # Time limit
-    set_optimizer_attribute(model, "MIPGap", params.tolgap) # Relative MIP optimality gap
-    set_optimizer_attribute(model, "NodeLimit", params.maxnodes) # MIP node limit
-    set_optimizer_attribute(model, "Cuts", 0) # Global cut aggressiveness setting. 
-    set_optimizer_attribute(model, "PreCrush", 1) # Controls presolve reductions that affect user cuts
-    set_optimizer_attribute(model, "VarBranch", -1) # Controls the branch variable selection strategy. 
-    set_optimizer_attribute(model, "NodeMethod", -1) # Method used to solve MIP node relaxations
-    set_optimizer_attribute(model, "BranchDir", -1) # Preferred branch direction
-    set_optimizer_attribute(model, "Presolve", -1) # Controls the presolve level
-    set_optimizer_attribute(model, "Method", -1) # Algorithm used to solve MIP root relaxations. 
-    set_optimizer_attribute(model, "Threads", 1) # Controls the number of threads.
-  elseif params.solver == "Cplex"
-    model = Model(Cplex.Optimizer)
-  else
-    println("No solver selected")
-    return 0
-  end
+#  if params.solver == "Gurobi"
+#    model = Model(Gurobi.Optimizer)
+#    #set_optimizer_attribute(model, "NonConvex", 2)
+#    set_optimizer_attribute(model, "TimeLimit", params.maxtime) # Time limit
+#    set_optimizer_attribute(model, "MIPGap", params.tolgap) # Relative MIP optimality gap
+#    set_optimizer_attribute(model, "NodeLimit", params.maxnodes) # MIP node limit
+#    set_optimizer_attribute(model, "Cuts", 0) # Global cut aggressiveness setting. 
+#    set_optimizer_attribute(model, "PreCrush", 1) # Controls presolve reductions that affect user cuts
+#    set_optimizer_attribute(model, "VarBranch", -1) # Controls the branch variable selection strategy. 
+#    set_optimizer_attribute(model, "NodeMethod", -1) # Method used to solve MIP node relaxations
+#    set_optimizer_attribute(model, "BranchDir", -1) # Preferred branch direction
+#    set_optimizer_attribute(model, "Presolve", -1) # Controls the presolve level
+#    set_optimizer_attribute(model, "Method", -1) # Algorithm used to solve MIP root relaxations. 
+#    set_optimizer_attribute(model, "Threads", 1) # Controls the number of threads.
+#  elseif params.solver == "Cplex"
+#    model = Model(Cplex.Optimizer)
+#  else
+#    println("No solver selected")
+#    return 0
+#  end
+#
+#  N = inst.N
 
-  N = inst.N
+#  ### Defining variables ###
+#  @variable(model, x[i=1:N], Bin)
 
-  ### Defining variables ###
-  @variable(model, x[i=1:N], Bin)
+#  ### Objective function ###
+#  @objective(model, Max, 
+#  sum(inst.P[i,i]*x[i] for i=1:N) + 
+#  sum(inst.P[i,j]*x[i]*x[j] for i=1:N, j=(i+1):N)
+#  )
+#
+#  ### knapsack constraints ###
+#  @constraint(model, knap, sum(inst.W[i]*x[i] for i=1:N) <= inst.C)
+#
+#  #writeLP(model,"modelo.lp",genericnames=false)
 
-  ### Objective function ###
-  @objective(model, Max, 
-  sum(inst.P[i,i]*x[i] for i=1:N) + 
-  sum(inst.P[i,j]*x[i]*x[j] for i=1:N, j=(i+1):N)
-  )
+#  callback_called = false
+#  function heur_callback_function(cb_data)
+#      callback_called = true
+#      greedy(inst, params)
+#      x_vals = callback_value.(Ref(cb_data), x)
+#      ret = MOI.submit(model, MOI.HeuristicSolution(cb_data), x, x_vals)
+#      #println("Heuristic solution status = $(ret)")
+#  end
 
-  ### knapsack constraints ###
-  @constraint(model, knap, sum(inst.W[i]*x[i] for i=1:N) <= inst.C)
+#  MOI.set(model, MOI.HeuristicCallback(), heur_callback_function)
 
-  #writeLP(model,"modelo.lp",genericnames=false)
+#  status = optimize!(model)
 
-  callback_called = false
-  function heur_callback_function(cb_data)
-      callback_called = true
-      greedy(inst, params)
-      x_vals = callback_value.(Ref(cb_data), x)
-      ret = MOI.submit(model, MOI.HeuristicSolution(cb_data), x, x_vals)
-      #println("Heuristic solution status = $(ret)")
-  end
+#  opt = 0
+#  if termination_status(model) == MOI.OPTIMAL    
+#    println("status = ", termination_status(model))
+#    opt = 1
+#  else
+#    println("status = ", termination_status(model))
+#  end
 
-  MOI.set(model, MOI.HeuristicCallback(), heur_callback_function)
+#  bestsol = objective_value(model)
+#  bestbound = objective_bound(model)
+#  numnodes = node_count(model)
+#  time = solve_time(model)
+#  gap = MOI.get(model, MOI.RelativeGap())
 
-  status = optimize!(model)
+#  open("saida.txt","a") do f
+#    write(f,"$(params.instName);$(params.form);$bestbound;$bestsol;$gap;$time;$numnodes;$opt \n")
+#  end
 
-  opt = 0
-  if termination_status(model) == MOI.OPTIMAL    
-    println("status = ", termination_status(model))
-    opt = 1
-  else
-    println("status = ", termination_status(model))
-  end
+#  #if params.printsol == 1x
+#  #  printStandardFormulationSolution(inst,x)
+#  #end
 
-  bestsol = objective_value(model)
-  bestbound = objective_bound(model)
-  numnodes = node_count(model)
-  time = solve_time(model)
-  gap = MOI.get(model, MOI.RelativeGap())
-
-  open("saida.txt","a") do f
-    write(f,"$(params.instName);$(params.form);$bestbound;$bestsol;$gap;$time;$numnodes;$opt \n")
-  end
-
-  #if params.printsol == 1x
-  #  printStandardFormulationSolution(inst,x)
-  #end
-
-end 
+#end 
  
 
 end

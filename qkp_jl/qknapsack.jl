@@ -13,7 +13,9 @@ import Data
 import Parameters
 import Formulations
 import Heuristics
-import BranchAndCut
+import cbBranchAndCut
+import cbHeuristic
+import cbLazyConstraint
 
 # julia qknapsack.jl --inst AAAA --form BBBB 
  
@@ -29,9 +31,11 @@ elseif params.form == "linear"
    Formulations.linearFormulation(inst, params)
 elseif params.form == "greedy"
    xp = Heuristics.greedy(inst, params)
-   println(xp)
-elseif params.form == "bc"
-   BranchAndCut.callbackCutsQkp(inst, params)
-elseif params.form == "cbheur"
-   Heuristics.callbackHeuristic(inst, params)
+   #println(xp)
+elseif params.form == "cbBCut"
+   cbBranchAndCut.callBackCuts(inst, params)
+elseif params.form == "cbLazy"
+   cbLazyConstraint.callBackLazyConstraint(inst, params)
+elseif params.form == "cbHeur"
+   cbHeuristic.callBackHeuristic(inst, params)
 end
