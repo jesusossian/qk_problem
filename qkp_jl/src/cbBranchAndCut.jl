@@ -15,9 +15,9 @@ mutable struct stdFormVars
     y  
 end
 
-export stdFormVars, callBackCuts
+export stdFormVars, cbCuts
 
-function callBackCuts(inst::InstanceData, params::ParameterData)
+function cbCuts(inst::InstanceData, params::ParameterData)
 
     if params.solver == "gurobi"
         model = Model(Gurobi.Optimizer)

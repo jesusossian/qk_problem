@@ -1,0 +1,58 @@
+Set parameter Username
+Academic license - for non-commercial use only - expires 2023-12-01
+Set parameter TimeLimit to value 3600
+Set parameter MIPGap to value 1e-06
+Set parameter Threads to value 1
+Set parameter NodefileStart to value 0.5
+Set parameter NodefileDir to value "/home/jossian/Downloads"
+Set parameter MIPGap to value 1e-06
+Set parameter Threads to value 1
+Set parameter NodefileDir to value "/home/jossian/Downloads"
+Set parameter NodefileStart to value 0.5
+Set parameter TimeLimit to value 3600
+Gurobi Optimizer version 10.0.0 build v10.0.0rc2 (linux64)
+
+CPU model: Intel(R) Core(TM) i5-1035G1 CPU @ 1.00GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 1 threads
+
+Optimize a model with 1 rows, 200 columns and 200 nonzeros
+Model fingerprint: 0xed50f2dd
+Model has 19900 quadratic objective terms
+Variable types: 0 continuous, 200 integer (200 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+01]
+  Objective range  [1e+00, 5e+01]
+  QObjective range [2e+00, 1e+02]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+03, 1e+03]
+Found heuristic solution: objective -0.0000000
+Presolve time: 0.03s
+Presolved: 1 rows, 200 columns, 200 nonzeros
+Presolved model has 20100 quadratic objective terms
+Variable types: 0 continuous, 200 integer (200 binary)
+Found heuristic solution: objective 261976.00000
+
+Root relaxation: objective 3.114046e+05, 402 iterations, 0.01 seconds (0.02 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 311404.617    0  175 261976.000 311404.617  18.9%     -    0s
+H    0     0                    266497.00000 311404.617  16.9%     -    0s
+H    0     0                    266525.00000 311404.617  16.8%     -    0s
+     0     0 311404.617    0  175 266525.000 311404.617  16.8%     -    0s
+     0     2 310924.925    0  175 266525.000 310924.925  16.7%     -    0s
+  4799  3769 268879.129  110   60 266525.000 307695.857  15.4%   2.9    5s
+ 10202  8462 288786.596   53  120 266525.000 306940.149  15.2%   2.8   10s
+ 15678 13229 291339.236   48  125 266525.000 306485.264  15.0%   2.8   15s
+ 21329 18132 272996.674   92   91 266525.000 306221.024  14.9%   2.8   20s
+ 27296 23321 274250.923   88   93 266525.000 305973.439  14.8%   2.8   25s
+ 33117 28418 280135.011   73  108 266525.000 305752.418  14.7%   2.7   30s
+ 39171 33703 267769.949  123   49 266525.000 305624.450  14.7%   2.8   35s
+ 44729 38581 300192.176   31  147 266525.000 305507.640  14.6%   2.8   40s
+ 50787 43839 281400.987   70  110 266525.000 305381.440  14.6%   2.8   45s
+ 56751 49044 271610.943   72  110 266525.000 305229.690  14.5%   2.8   50s
+ 62735 54298 274723.486   85  100 266525.000 305115.462  14.5%   2.8   55s
+ 68378 59260 268853.255   78  106 266525.000 305020.377  14.4%   2.8   60s
+ 73895 64154 280825.453   71  114 266525.000 304937.109  14.4%   2.8   65s
+ 79978 69503 297172.090   38  138 266525.000 304871.703  14.4%   2.7   70s

@@ -1,9 +1,9 @@
 push!(LOAD_PATH, "src/")
-# push!(DEPOT_PATH, JULIA_DEPOT_PATH)
+#push!(DEPOT_PATH, JULIA_DEPOT_PATH)
 using Pkg
 #Pkg.activate(".")
-# Pkg.instantiate()
-# Pkg.build()
+#Pkg.instantiate()
+#Pkg.build()
 
 using JuMP
 using Gurobi
@@ -33,9 +33,9 @@ elseif params.form == "greedy"
    xp = Heuristics.greedy(inst, params)
    #println(xp)
 elseif params.form == "cbBCut"
-   cbBranchAndCut.callBackCuts(inst, params)
+   cbBranchAndCut.cbCuts(inst, params)
 elseif params.form == "cbLazy"
-   cbLazyConstraint.callBackLazyConstraint(inst, params)
+   cbLazyConstraint.cbLazy(inst, params)
 elseif params.form == "cbHeur"
-   cbHeuristic.callBackHeuristic(inst, params)
+   cbHeuristic.cbHeur(inst, params)
 end

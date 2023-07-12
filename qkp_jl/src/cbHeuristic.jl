@@ -15,9 +15,9 @@ mutable struct stdFormVars
   y  
 end
 
-export stdFormVars, callBackHeuristic
+export stdFormVars, cbHeur
 
-function callBackHeuristic(inst::InstanceData, params::ParameterData)
+function cbHeur(inst::InstanceData, params::ParameterData)
 
     if params.solver == "gurobi"
         model = Model(Gurobi.Optimizer)

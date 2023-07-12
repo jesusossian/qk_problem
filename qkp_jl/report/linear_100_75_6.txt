@@ -1,0 +1,57 @@
+Set parameter Username
+Academic license - for non-commercial use only - expires 2023-12-01
+Set parameter TimeLimit to value 3600
+Set parameter MIPGap to value 1e-06
+Set parameter Threads to value 1
+Set parameter NodefileStart to value 0.5
+Set parameter NodefileDir to value "/home/jossian/Downloads"
+Set parameter MIPGap to value 1e-06
+Set parameter Threads to value 1
+Set parameter NodefileDir to value "/home/jossian/Downloads"
+Set parameter NodefileStart to value 0.5
+Set parameter TimeLimit to value 3600
+Gurobi Optimizer version 10.0.0 build v10.0.0rc2 (linux64)
+
+CPU model: Intel(R) Core(TM) i5-1035G1 CPU @ 1.00GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 1 threads
+
+Optimize a model with 14851 rows, 5050 columns and 34750 nonzeros
+Model fingerprint: 0xd06fc189
+Variable types: 0 continuous, 5050 integer (5050 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+01]
+  Objective range  [1e+00, 5e+01]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [1e+00, 1e+02]
+Found heuristic solution: objective 33.0000000
+Presolve removed 7518 rows and 1284 columns
+Presolve time: 0.07s
+Presolved: 7333 rows, 3766 columns, 14764 nonzeros
+Variable types: 0 continuous, 3766 integer (3766 binary)
+Found heuristic solution: objective 689.0000000
+
+Root relaxation: objective 6.699405e+03, 3546 iterations, 0.10 seconds (0.16 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 6699.40462    0 3694  689.00000 6699.40462   872%     -    0s
+H    0     0                    4749.0000000 6699.40462  41.1%     -    0s
+     0     0 5417.03727    0  280 4749.00000 5417.03727  14.1%     -    0s
+H    0     0                    5191.0000000 5417.03727  4.35%     -    0s
+H    0     0                    5398.0000000 5417.03727  0.35%     -    0s
+     0     0     cutoff    0      5398.00000 5398.00000  0.00%     -    0s
+
+Cutting planes:
+  Lift-and-project: 1
+  RLT: 107
+
+Explored 1 nodes (5933 simplex iterations) in 0.79 seconds (1.46 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 5: 5398 5191 4749 ... 33
+
+Optimal solution found (tolerance 1.00e-06)
+Best objective 5.398000000000e+03, best bound 5.398000000000e+03, gap 0.0000%
+
+User-callback calls 396, time in user-callback 0.00 sec

@@ -13,9 +13,9 @@ mutable struct stdFormVars
     y  
 end
 
-export stdFormVars, callBackLazyConstraint
+export stdFormVars, cbLazy
 
-function callBackLazyConstraint(inst::InstanceData, params::ParameterData)
+function cbLazy(inst::InstanceData, params::ParameterData)
 
     if params.solver == "gurobi"
         model = Model(Gurobi.Optimizer)
@@ -30,6 +30,9 @@ function callBackLazyConstraint(inst::InstanceData, params::ParameterData)
         #set_optimizer_attribute(model, "Presolve", -1) 
         #set_optimizer_attribute(model, "Method", -1) 
         set_optimizer_attribute(model, "Threads", 1)
+        set_optimizer_attribute(model,"NodefileStart",0.5)
+        set_optimizer_attribute(model,"NodefileDir","/home/jossian/Downloads")
+        #set_optimizer_attribute(model,"MIPFocus", 3)
     
     elseif params.solver == "cplex"
         model = Model(Cplex.Optimizer)

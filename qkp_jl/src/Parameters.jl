@@ -18,7 +18,7 @@ function readInputParameters(ARGS)
 
     ### Set standard values for the parameters ###
     instName = "../instances/50/50_100_1.txt"
-    form = "cbLazy"
+    form = "greedy"
     solver = "gurobi"
     maxtime = 3600
     tolgap = 1e-6
