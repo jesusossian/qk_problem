@@ -1,0 +1,54 @@
+Set parameter Username
+Academic license - for non-commercial use only - expires 2023-12-01
+Set parameter TimeLimit to value 3600
+Set parameter MIPGap to value 1e-06
+Set parameter Threads to value 1
+Set parameter NodefileStart to value 0.5
+Set parameter NodefileDir to value "/home/jossian/Downloads"
+Set parameter MIPGap to value 1e-06
+Set parameter Threads to value 1
+Set parameter NodefileDir to value "/home/jossian/Downloads"
+Set parameter NodefileStart to value 0.5
+Set parameter TimeLimit to value 3600
+Set parameter LazyConstraints to value 1
+Gurobi Optimizer version 10.0.0 build v10.0.0rc2 (linux64)
+
+CPU model: Intel(R) Core(TM) i5-1035G1 CPU @ 1.00GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 1 threads
+
+Optimize a model with 1 rows, 5050 columns and 100 nonzeros
+Model fingerprint: 0xf66a982e
+Variable types: 0 continuous, 5050 integer (5050 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+01]
+  Objective range  [1e+00, 5e+01]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [7e+02, 7e+02]
+Presolve time: 0.00s
+Presolved: 1 rows, 5050 columns, 100 nonzeros
+Variable types: 0 continuous, 5050 integer (5050 binary)
+
+Root relaxation: objective 9.679900e+04, 59 iterations, 0.00 seconds (0.01 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 96799.0000    0    -          - 96799.0000      -     -    0s
+     0     0 58015.1311    0 2370          - 58015.1311      -     -    1s
+     0     0 56881.1803    0 2717          - 56881.1803      -     -    1s
+     0     2 56880.2353    0 2717          - 56880.2353      -     -    1s
+*    3     3               3    56792.000000 56880.2017  0.16%   429    1s
+
+Cutting planes:
+  Lazy constraints: 10235
+
+Explored 9 nodes (13787 simplex iterations) in 1.38 seconds (0.85 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 1: 56792 
+
+Optimal solution found (tolerance 1.00e-06)
+Best objective 5.679200000000e+04, best bound 5.679200000000e+04, gap 0.0000%
+
+User-callback calls 232, time in user-callback 0.76 sec
+status = OPTIMAL

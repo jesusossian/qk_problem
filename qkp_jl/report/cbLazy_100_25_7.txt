@@ -1,0 +1,55 @@
+Set parameter Username
+Academic license - for non-commercial use only - expires 2023-12-01
+Set parameter TimeLimit to value 3600
+Set parameter MIPGap to value 1e-06
+Set parameter Threads to value 1
+Set parameter NodefileStart to value 0.5
+Set parameter NodefileDir to value "/home/jossian/Downloads"
+Set parameter MIPGap to value 1e-06
+Set parameter Threads to value 1
+Set parameter NodefileDir to value "/home/jossian/Downloads"
+Set parameter NodefileStart to value 0.5
+Set parameter TimeLimit to value 3600
+Set parameter LazyConstraints to value 1
+Gurobi Optimizer version 10.0.0 build v10.0.0rc2 (linux64)
+
+CPU model: Intel(R) Core(TM) i5-1035G1 CPU @ 1.00GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 1 threads
+
+Optimize a model with 1 rows, 5050 columns and 100 nonzeros
+Model fingerprint: 0x0ea9f9e8
+Variable types: 0 continuous, 5050 integer (5050 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+01]
+  Objective range  [1e+00, 5e+01]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [4e+02, 4e+02]
+Presolve time: 0.00s
+Presolved: 1 rows, 5050 columns, 100 nonzeros
+Variable types: 0 continuous, 5050 integer (5050 binary)
+
+Root relaxation: objective 1.196562e+04, 1622 iterations, 0.03 seconds (0.03 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 11965.6172    0  593          - 11965.6172      -     -    0s
+H    0     0                    4899.0000000 11965.6172   144%     -    0s
+     0     0 11066.4043    0  676 4899.00000 11066.4043   126%     -    0s
+     0     2 11066.3566    0  676 4899.00000 11066.3566   126%     -    0s
+H    9     9                    10987.000000 11062.9000  0.69%   544    1s
+*  323     0              10    11016.000000 11016.0000  0.00%  96.6    3s
+
+Cutting planes:
+  Lazy constraints: 11127
+
+Explored 324 nodes (35200 simplex iterations) in 3.37 seconds (1.75 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 3: 11016 10987 4899 
+
+Optimal solution found (tolerance 1.00e-06)
+Best objective 1.101600000000e+04, best bound 1.101600000000e+04, gap 0.0000%
+
+User-callback calls 1581, time in user-callback 1.52 sec
+status = OPTIMAL

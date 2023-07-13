@@ -1,0 +1,56 @@
+Set parameter Username
+Academic license - for non-commercial use only - expires 2023-12-01
+Set parameter TimeLimit to value 3600
+Set parameter MIPGap to value 1e-06
+Set parameter Threads to value 1
+Set parameter NodefileStart to value 0.5
+Set parameter NodefileDir to value "/home/jossian/Downloads"
+Set parameter MIPGap to value 1e-06
+Set parameter Threads to value 1
+Set parameter NodefileDir to value "/home/jossian/Downloads"
+Set parameter NodefileStart to value 0.5
+Set parameter TimeLimit to value 3600
+Set parameter LazyConstraints to value 1
+Gurobi Optimizer version 10.0.0 build v10.0.0rc2 (linux64)
+
+CPU model: Intel(R) Core(TM) i5-1035G1 CPU @ 1.00GHz, instruction set [SSE2|AVX|AVX2|AVX512]
+Thread count: 4 physical cores, 8 logical processors, using up to 1 threads
+
+Optimize a model with 1 rows, 5050 columns and 100 nonzeros
+Model fingerprint: 0xf7a9f525
+Variable types: 0 continuous, 5050 integer (5050 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 2e+01]
+  Objective range  [1e+00, 5e+01]
+  Bounds range     [0e+00, 0e+00]
+  RHS range        [4e+02, 4e+02]
+Presolve time: 0.00s
+Presolved: 1 rows, 5050 columns, 100 nonzeros
+Variable types: 0 continuous, 5050 integer (5050 binary)
+
+Root relaxation: objective 3.297372e+04, 1686 iterations, 0.07 seconds (0.10 work units)
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0 32973.7195    0  335          - 32973.7195      -     -    0s
+H    0     0                    12301.000000 32973.7195   168%     -    0s
+H    0     0                    12679.000000 32973.7195   160%     -    0s
+     0     0 22634.2723    0 2270 12679.0000 22634.2723  78.5%     -    0s
+     0     2 22634.1044    0 2270 12679.0000 22634.1044  78.5%     -    1s
+H   14    14                    22036.000000 22633.1726  2.71%   237    1s
+*  316     0              19    22044.000000 22044.0000  0.00%  81.8    3s
+
+Cutting planes:
+  Lazy constraints: 10217
+
+Explored 317 nodes (29695 simplex iterations) in 3.48 seconds (1.92 work units)
+Thread count was 1 (of 8 available processors)
+
+Solution count 4: 22044 22036 12679 12301 
+
+Optimal solution found (tolerance 1.00e-06)
+Best objective 2.204400000000e+04, best bound 2.204400000000e+04, gap 0.0000%
+
+User-callback calls 1477, time in user-callback 1.50 sec
+status = OPTIMAL
