@@ -82,7 +82,6 @@ function cbLazy(inst::InstanceData, params::ParameterData)
                     con = @build_constraint(x[i] + x[j] <= 1 + y[i,j])
                     #println("Adding $(con)")
                     MOI.submit(model, MOI.LazyConstraint(cb_data), con)
-                    #MOI.submit(model, MOI.LazyConstraint(cb_data), con)
                 end
             end
         end
