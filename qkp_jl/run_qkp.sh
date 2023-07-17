@@ -6,7 +6,7 @@ form_=cbLazy
 
 for tam in 300 #10 50 100 200 300 400
 do
-    for dens in 75 #25 50 75 100
+    for dens in 100 #25 50 75 100
     do
         for id in {1..10}
         do
