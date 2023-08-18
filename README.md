@@ -4,13 +4,12 @@ Quadratic Knapsack Problem
 
 Consider
 
-N =  \{1, 2, \ldots, n \} numbers of items
-
-p_{i,j}, profit for i=1,2,\ldots,n and j=i+1,\ldots,n 
-
-w_i, weigt for each i \in N
-
-c, capacit 
+\begin{itemize}
+\item $N =  \{1, 2, \ldots, n \}$ numbers of items
+\item $p_{i,j}$, profit for $i = 1, 2, \ldots, n$ and $j = i+1, \ldots, n$
+\item $w_i$, weigt for $i \in N$
+\item c, capacity
+\end{itemize}
 
 Problem
 \begin{align}
