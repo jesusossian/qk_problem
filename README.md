@@ -12,6 +12,7 @@ Consider
 \end{itemize}
 
 Problem
+
 \begin{align}
 \max \ & \sum_{i=1}^{n} \sum_{j=i+1}^{n} p_{i,j} x_i x_j \\
 & \sum_{i=1}^{n} w_i x_i \leq c \\
