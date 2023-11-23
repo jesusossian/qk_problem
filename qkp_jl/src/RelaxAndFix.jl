@@ -8,8 +8,8 @@ using Parameters
 using LinearAlgebra
 
 mutable struct stdFormVars
-  x
-  y  
+    x
+    y  
 end
 
 export relaxAndFix, stdFormVars

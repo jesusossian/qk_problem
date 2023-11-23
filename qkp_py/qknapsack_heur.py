@@ -10,30 +10,31 @@ import numpy as np
 import re
 
 def qknapsack(datafile):
-  with open(datafile, 'r') as file: linhas = file.readlines()
+    with open(datafile, 'r') as file: linhas = file.readlines()
 
-  linhas = [a.strip() for a in linhas] # remove linha vazia inicial e elimina os "\n" de cada linha
+    linhas = [a.strip() for a in linhas] # remove linha vazia inicial e elimina os "\n" de cada linha
 
-  n = int(linhas[0]) # ler o tamanho da instancia
+    n = int(linhas[0]) # ler o tamanho da instancia
 
-  d = np.fromstring(linhas[1], dtype=int, sep = ' ') # ler a diagonal da matriz
+    d = np.fromstring(linhas[1], dtype=int, sep = ' ') # ler a diagonal da matriz
 
-  p = np.zeros((n,n), dtype=int) # define a matriz
+    p = np.zeros((n,n), dtype=int) # define a matriz
 
-  for i in range(n): # preenche a diagonal
-    p[i][i] = d[i]
+    for i in range(n): # preenche a diagonal
+        p[i][i] = d[i]
 
-  for i in range(n-1): # preenche o resto da matriz
-    linha = np.fromstring(linhas[i+2], dtype=int, sep = ' ')
-    for j in range(n-(i+1)):
-      p[i][j+i+1] = linha[j]
-      p[j+i+1][i] = p[i][j+i+1]
+    for i in range(n-1): # preenche o resto da matriz
+        linha = np.fromstring(linhas[i+2], dtype=int, sep = ' ')
+        for j in range(n-(i+1)):
+            p[i][j+i+1] = linha[j]
+            p[j+i+1][i] = p[i][j+i+1]
 
-  c = int(linhas[n+2]) # ler a capacidade
+    c = int(linhas[n+2]) # ler a capacidade
 
-  w = np.fromstring(linhas[n+3], dtype=int, sep = ' ') # ler os pesos
+    w = np.fromstring(linhas[n+3], dtype=int, sep = ' ') # ler os pesos
 
-  return n, p, w, c
+    return n, p, w, c
+
 
 def guloso(n, p, w, c):
   psum = wsum = 0
