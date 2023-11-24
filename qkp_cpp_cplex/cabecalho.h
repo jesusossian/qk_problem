@@ -17,7 +17,7 @@
 using namespace std;
 
 typedef struct opcoes {
-  int solve_lp, solve_mip;
+    int solve_lp, solve_mip;
 } str_opc;
 
 str_opc opc;

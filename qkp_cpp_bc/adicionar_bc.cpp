@@ -1,135 +1,116 @@
-int adicionar_bc_cover(XPRSprob prob, Array<int> &mtype, Array<char> &qrtype, Array<double> &drhs, Array<int> &mstart, double objval_cover, Array<int> &mcols, Array<double> &dmatval)
-{
-  int i, card_cover, ncut;
+int adicionar_bc_cover(XPRSprob prob, Array<int> &mtype, Array<char> &qrtype, Array<double> &drhs, Array<int> &mstart, double objval_cover, Array<int> &mcols, Array<double> &dmatval) {
+    int i, card_cover, ncut;
   
-  ncut = 0;
-  card_cover = 0;
+    ncut = 0;
+    card_cover = 0;
   
-  for(i=0; i<N;++i) 
-    {
-      if(z[i] > 1-0.0001) 
-	{
-	  dmatval[ card_cover ] = 1;
-	  mcols[ card_cover ] = i;
-	  ++card_cover;
-	}
+    for(i=0; i<N;++i) {
+        if(z[i] > 1-0.0001) {
+	        dmatval[ card_cover ] = 1;
+	        mcols[ card_cover ] = i;
+	        ++card_cover;
+        }
     }
   
-  drhs[0] = card_cover-1;
-  mstart[1] = card_cover;
+    drhs[0] = card_cover-1;
+    mstart[1] = card_cover;
   
-  ncut++;
+    ncut++;
   
-  if(ncut > 0)
-    if(XPRSaddcuts(prob, ncut, &mtype, &qrtype, &drhs, &mstart, &mcols, &dmatval)) exit(9);
-
-  return ncut;
+    if(ncut > 0) {
+        if(XPRSaddcuts(prob, ncut, &mtype, &qrtype, &drhs, &mstart, &mcols, &dmatval)) exit(9);
+    }
+    
+    return ncut;
 }
 
-int adicionar_bc_cover_quad(XPRSprob prob, Array<int> &mtype, Array<char> &qrtype, Array<double> &drhs, Array<int> &mstart, double objval_cover, Array<int> &mcols, Array<double> &dmatval)
-{
-  int i, j, k, card_cover;
-  float left_cover;
-  Array< Array<double> > y;
-  int w, p, ncut;
-  int newrow, nz, ad, l;
+int adicionar_bc_cover_quad(XPRSprob prob, Array<int> &mtype, Array<char> &qrtype, Array<double> &drhs, Array<int> &mstart, double objval_cover, Array<int> &mcols, Array<double> &dmatval) {
+    int i, j, k, card_cover;
+    float left_cover;
+    Array< Array<double> > y;
+    int w, p, ncut;
+    int newrow, nz, ad, l;
   
-  y.aloca(N);
-  for(i=0;i<N;++i)
-    y[i].redefine(N,0);
-  
-  k=N;
-  for(i=0; i<N; ++i) 
-    {
-      for(j=0; j<N-i-1; ++j, ++k) 
-	{
-	  y[i][i+j+1] = x[k];
-	}
+    y.aloca(N);
+    for(i=0;i<N;++i) {
+        y[i].redefine(N,0);
     }
   
-  newrow = N;
-  nz = 2*N*(N-1)*(N-2);
-  qrtype.redefine(newrow,'L');
-  drhs.redefine(newrow,0);
-  mstart.aloca(newrow+1);
-  mcols.aloca(nz);
-  dmatval.aloca(nz);
-  
-  ncut = 0;
-  card_cover = 0;
-  
-  for(i=0; i<N; ++i)
-    {
-      if(z[i] > 0.0001) ++card_cover;
+    k=N;
+    for(i=0; i<N; ++i) {
+        for(j=0; j<N-i-1; ++j, ++k) {
+	        y[i][i+j+1] = x[k];
+	    }
     }
   
-  mstart[0] = 0;
-  for(i=0, p=0, w=0; i<N; ++i)
-    {
-      left_cover = 0;
-      if(x[i] > 0.0001)
-	{
-	  for(j=0; j<N; ++j)
-	    {
-	      if(z[j] > 1-0.0001)
-		{
-		  if(i<j) left_cover += y[i][j];
-		  if(i>j) left_cover += y[j][i];
-		}
-	    }
-	  if(z[i] > 1-0.0001)
-	    {
-	      left_cover += (2-card_cover)*x[i];
-	    } 
-	  else
-	    {
-	      left_cover += (1-card_cover)*x[i];
-	    }
+    newrow = N;
+    nz = 2*N*(N-1)*(N-2);
+    qrtype.redefine(newrow,'L');
+    drhs.redefine(newrow,0);
+    mstart.aloca(newrow+1);
+    mcols.aloca(nz);
+    dmatval.aloca(nz);
+  
+    ncut = 0;
+    card_cover = 0;
+  
+    for(i=0; i<N; ++i) {
+        if(z[i] > 0.0001) ++card_cover;
+    }
+  
+    mstart[0] = 0;
+    for(i=0, p=0, w=0; i<N; ++i) {
+        left_cover = 0;
+        if(x[i] > 0.0001) {
+	        for(j=0; j<N; ++j) {
+	            if(z[j] > 1-0.0001) {
+		            if(i<j) left_cover += y[i][j];
+		            if(i>j) left_cover += y[j][i];
+		        }
+	        }
+	        if(z[i] > 1-0.0001) {
+	            left_cover += (2-card_cover)*x[i];
+	        } 
+	        else {
+	            left_cover += (1-card_cover)*x[i];
+	        }
 	  
-	  if (left_cover > 0.0001)
-	    {
-	      if(z[i] > 1-0.0001)
-		{
-		  dmatval[w] = 2-card_cover;
-		  mcols[w] = i;
-		}
-	      else
-		{
-		  dmatval[w] = 1-card_cover;
-		  mcols[w] = i;
-		}
+	        if (left_cover > 0.0001) {
+	            if(z[i] > 1-0.0001) {
+		            dmatval[w] = 2-card_cover;
+		            mcols[w] = i;
+		        }
+	            else {
+		            dmatval[w] = 1-card_cover;
+		            mcols[w] = i;
+		        }
 	      
-	      for(j=0; j<N; ++j)
-		{
-		  if(z[j] >1-0.0001)
-		    {
-		      if(i<j)
-			{
-			  for(l=0, ad=N; l<i; ++l) ad += N-l-1;
-			  
-			  dmatval[++w] = 1;
-			  mcols[w] = ad + j - i - 1;
-			}
-		      if(i>j)
-			{
-			  for(l=0, ad=N; l<j; ++l) ad += N-l-1;
-			  
-			  dmatval[++w] = 1;
-			  mcols[w] = ad + i - j - 1;
-			}
-		    }
-		}
+	            for(j=0; j<N; ++j) {
+		            if(z[j] >1-0.0001) {
+		                if(i<j) {
+			                for(l=0, ad=N; l<i; ++l) ad += N-l-1;
+			                dmatval[++w] = 1;
+			                mcols[w] = ad + j - i - 1;
+			            }
+		                if(i>j) {
+			                for(l=0, ad=N; l<j; ++l) ad += N-l-1;
+			                dmatval[++w] = 1;
+			                mcols[w] = ad + i - j - 1;
+			            }
+		            }
+		        }
 	      
-	      mstart[++p] = ++w;
-	      ncut++;
+	            mstart[++p] = ++w;
+	            ncut++;
+	        }
 	    }
-	}
-  }
+    }
   
-  if(ncut > 0)
-    if(XPRSaddcuts(prob, ncut, &mtype, &qrtype, &drhs, &mstart, &mcols, &dmatval)) exit(9);
-  
-  return ncut;
+    if(ncut > 0) {
+        if(XPRSaddcuts(prob, ncut, &mtype, &qrtype, &drhs, &mstart, &mcols, &dmatval)) exit(9);
+    }
+    
+    return ncut;
 }
 
 int adicionar_bc_extender(XPRSprob prob, Array<int> &mtype, Array<char> &qrtype, Array<double> &drhs, Array<int> &mstart, double objval_cover, Array<int> &mcols, Array<double> &dmatval)
