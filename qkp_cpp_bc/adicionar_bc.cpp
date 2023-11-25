@@ -113,171 +113,147 @@ int adicionar_bc_cover_quad(XPRSprob prob, Array<int> &mtype, Array<char> &qrtyp
     return ncut;
 }
 
-int adicionar_bc_extender(XPRSprob prob, Array<int> &mtype, Array<char> &qrtype, Array<double> &drhs, Array<int> &mstart, double objval_cover, Array<int> &mcols, Array<double> &dmatval)
-{
-  int i, card_cover, card_ext, max, ncut;
+int adicionar_bc_extender(XPRSprob prob, Array<int> &mtype, Array<char> &qrtype, Array<double> &drhs, Array<int> &mstart, double objval_cover, Array<int> &mcols, Array<double> &dmatval) {
+    int i, card_cover, card_ext, max, ncut;
   
-  card_cover = 0;
-  card_ext = 0;
-  max = 0;
-  ncut = 0;
+    card_cover = 0;
+    card_ext = 0;
+    max = 0;
+    ncut = 0;
 
-  for(i=0; i<N;++i) 
-    {
-      if(z[i] > 1-0.0001)
-	{
-	  dmatval[ card_cover ] = 1;
-	  mcols[ card_cover ] = i;
-	  ++card_cover;
-	  if(W[i] >= max) max = W[i];
-	}
+    for(i=0; i<N;++i) {
+        if(z[i] > 1-0.0001) {
+            dmatval[ card_cover ] = 1;
+            mcols[ card_cover ] = i;
+            ++card_cover;
+            if(W[i] >= max) max = W[i];
+        }
     }
   
-  card_ext = card_cover;
+    card_ext = card_cover;
   
-  for(i=0;i<N;++i) 
-    {
-      if((z[i] < 0.0001)&&(W[i] >= max)) 
-	{
-	  dmatval[ card_ext ] = 1;
-	  mcols[ card_ext ] = i;
-	  ++card_ext;
-	}
+    for(i=0;i<N;++i) {
+        if((z[i] < 0.0001)&&(W[i] >= max)) {
+            dmatval[ card_ext ] = 1;
+            mcols[ card_ext ] = i;
+            ++card_ext;
+        }
     }
   
-  drhs[0] = card_cover-1;
-  mstart[1] = card_ext;
+    drhs[0] = card_cover-1;
+    mstart[1] = card_ext;
   
-  ncut++;
+    ncut++;
   
-  if(ncut > 0)
-    if(XPRSaddcuts(prob, ncut, &mtype, &qrtype, &drhs, &mstart, &mcols, &dmatval)) exit(9);
-
-  return ncut;
+    if(ncut > 0) {
+        if(XPRSaddcuts(prob, ncut, &mtype, &qrtype, &drhs, &mstart, &mcols, &dmatval)) exit(9);
+    }
+    
+    return ncut;
 
 }
 
-int adicionar_bc_extender_quad(XPRSprob prob, Array<int> &mtype, Array<char> &qrtype, Array<double> &drhs, Array<int> &mstart, double objval_cover, Array<int> &mcols, Array<double> &dmatval)
-{
+int adicionar_bc_extender_quad(XPRSprob prob, Array<int> &mtype, Array<char> &qrtype, Array<double> &drhs, Array<int> &mstart, double objval_cover, Array<int> &mcols, Array<double> &dmatval) {
   
-  int i, j, k, card_cover, card_ext, max, ncut;
-  float left_ext;
-  Array< Array<double> > y;
-  int w, p, nr, np, ad, l;
+    int i, j, k, card_cover, card_ext, max, ncut;
+    float left_ext;
+    Array< Array<double> > y;
+    int w, p, nr, np, ad, l;
 
-  y.aloca(N);
-  for(i=0; i<N; ++i)
-    y[i].redefine(N,0);
+    y.aloca(N);
+    for(i=0; i<N; ++i) {
+        y[i].redefine(N,0);
+    }
 
-  k=N;
-  for(i=0; i<N; ++i) 
-    {
-      for(j=0; j<N-i-1; ++j, ++k) 
-	{
-	  y[i][i+j+1] = x[k];
-	}
+    k=N;
+    for(i=0; i<N; ++i) {
+        for(j=0; j<N-i-1; ++j, ++k) {
+            y[i][i+j+1] = x[k];
+        }
     }
   
-  card_cover = 0;
-  card_ext = 0;
-  max = 0;
-  ncut = 0;
+    card_cover = 0;
+    card_ext = 0;
+    max = 0;
+    ncut = 0;
   
-  nr = N;
-  np = 2*N*(N-1)*(N-2);
-  qrtype.redefine(nr,'L');
-  drhs.redefine(nr,0);
-  mstart.aloca(nr+1);
-  mcols.aloca(np);
-  dmatval.aloca(np);
+    nr = N;
+    np = 2*N*(N-1)*(N-2);
+    qrtype.redefine(nr,'L');
+    drhs.redefine(nr,0);
+    mstart.aloca(nr+1);
+    mcols.aloca(np);
+    dmatval.aloca(np);
   
-  for(i=0; i<N; ++i) 
-    {
-      if(z[i] > 1-0.0001) 
-	{
-	  ++card_cover;
-	  if(W[i] >= max) max = W[i];
-	}
+    for(i=0; i<N; ++i) {
+        if(z[i] > 1-0.0001) {
+            ++card_cover;
+            if(W[i] >= max) max = W[i];
+        }
     }
-  card_ext = card_cover;
+    card_ext = card_cover;
 
-  for(i=0; i<N; ++i) 
-    {
-      if((z[i] < 0.0001) && (W[i] >= max)) 
-	{
-	  ++card_ext;
-	}
+    for(i=0; i<N; ++i) {
+        if((z[i] < 0.0001) && (W[i] >= max)) {
+            ++card_ext;
+        }
     }
   
-  mstart[0] = 0;
-  for(i=0, p=0, w=0; i<N; ++i) 
-    {
-      left_ext = 0;
-      if(x[i] > 0.0001) 
-	{
-	  for(j=0; j<N; ++j) 
-	    {
-	      if((z[j] > 1-0.0001) || ((z[j] < 0.0001) && (W[j] >= max))) 
-		{
-		  if(i < j) left_ext += y[i][j];
-		  if(i > j) left_ext += y[j][i];
-		}
-	    }
+    mstart[0] = 0;
+    for(i=0, p=0, w=0; i<N; ++i) {
+        left_ext = 0;
+        if(x[i] > 0.0001) {
+            for(j=0; j<N; ++j) {
+                if((z[j] > 1-0.0001) || ((z[j] < 0.0001) && (W[j] >= max))) {
+                    if(i < j) left_ext += y[i][j];
+                    if(i > j) left_ext += y[j][i];
+                }
+            }
 	  
-	  if((z[i] > 1-0.0001) || ((z[i] < 0.0001) && (W[i] >= max))) 
-	    {
-	      left_ext += (2-card_cover)*x[i];
-	    } 
-	  else 
-	    {
-	      left_ext += (1-card_cover)*x[i];
-	    }
+            if((z[i] > 1-0.0001) || ((z[i] < 0.0001) && (W[i] >= max))) {
+                left_ext += (2-card_cover)*x[i];
+            } 
+            else {
+                left_ext += (1-card_cover)*x[i];
+            }
 	  
-	  if(left_ext > 0.0001) 
-	    {
-	      if((z[i]>1-0.0001) || ((z[i]<0.0001) && (W[i] >= max))) 
-		{
-		  dmatval[w] = 2-card_cover;
-		  mcols[w] = i;
-		} 
-	      else 
-		{
-		  dmatval[w] = 1-card_cover;
-		  mcols[w] = i;
-		}
+            if(left_ext > 0.0001) {
+                if((z[i]>1-0.0001) || ((z[i]<0.0001) && (W[i] >= max))) {
+                    dmatval[w] = 2-card_cover;
+                    mcols[w] = i;
+                } 
+                else {
+                    dmatval[w] = 1-card_cover;
+                    mcols[w] = i;
+                }
 	      
-	      for(j=0; j<N; ++j) 
-		{
-		  if((z[j] > 0.0001) || ((z[j] < 0.0001) && (W[j] >= max))) 
-		    {
-		      if(i < j) 
-			{
-			  for(l=0, ad=N; l<i; ++l) 
-			    ad += N-l-1;
-			  
-			  dmatval[++w] = 1;
-			  mcols[w] = ad+j-i-1;
-			}
-		      if(i > j) 
-			{
-			  for(l=0, ad=N; l<j; ++l) 
-			    ad += N-l-1;
-			  
-			  dmatval[++w] = 1;
-			  mcols[w] = ad+i-j-1;
-			}
-		    }
-		}
-	      mstart[++p] = ++w;
-	      ncut++;
-	    }
-	}
+                for(j=0; j<N; ++j) {
+                    if((z[j] > 0.0001) || ((z[j] < 0.0001) && (W[j] >= max))) {
+                        if(i < j) {
+                            for(l=0, ad=N; l<i; ++l) ad += N-l-1;
+
+                            dmatval[++w] = 1;
+                            mcols[w] = ad+j-i-1;
+			            }
+			            if(i > j) {
+                            for(l=0, ad=N; l<j; ++l) ad += N-l-1;
+
+                            dmatval[++w] = 1;
+                             mcols[w] = ad+i-j-1;
+                        }
+      	            }
+                }
+                mstart[++p] = ++w;
+                ncut++;
+            }
+        }
     }
   
-  if(ncut > 0)
-    if(XPRSaddcuts(prob, ncut, &mtype, &qrtype, &drhs, &mstart, &mcols, &dmatval)) exit(9);
-  
-  return ncut;
+    if(ncut > 0) {
+        if(XPRSaddcuts(prob, ncut, &mtype, &qrtype, &drhs, &mstart, &mcols, &dmatval)) exit(9);
+    }
+    
+    return ncut;
 
 }
 
