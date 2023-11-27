@@ -707,68 +707,64 @@ int adicionar_bc_tri(XPRSprob prob, Array<int> &mtype, Array<char> &qrtype, Arra
 }
 
 
-int adicionar_bc_lin(XPRSprob prob, Array<int> &mtype, Array<char> &qrtype, Array<double> &rhs, Array <int> &mstart, Array<int> &mrwind, Array<double> &dmatval)
-{
-  int i, j, k;
-  int nrow, nl;
-  char var[64];
-  Array<char> cnames;
-  Array<Array<double> > y;
-  int w, z, ncut = 0, ncutt;
+int adicionar_bc_lin(XPRSprob prob, Array<int> &mtype, Array<char> &qrtype, Array<double> &rhs, Array <int> &mstart, Array<int> &mrwind, Array<double> &dmatval) {
+    int i, j, k;
+    int nrow, nl;
+    char var[64];
+    Array<char> cnames;
+    Array<Array<double> > y;
+    int w, z, ncut = 0, ncutt;
 
-  y.aloca(N);
-  for(i=0;i<N;++i)
-    y[i].redefine(N, 0);
+    y.aloca(N);
+    for(i=0;i<N;++i) y[i].redefine(N, 0);
   
-  k = N;
-  for(i=0;i<N-1;++i) 
-    {
-      for(j=0;j<N-i-1;++j, ++k)
-	{
-	  y[i][i+j+1] = x[k];
-	}
+    k = N;
+    for(i=0;i<N-1;++i) {
+        for(j=0;j<N-i-1;++j, ++k) {
+            y[i][i+j+1] = x[k];
+        }
     }
     
-  int newrow = N*(N-1)/2, nz = N*(N-1), ad, l;
-  qrtype.redefine(newrow, 'L');
-  rhs.redefine(newrow, 1);
-  mstart.aloca(newrow+1);
-  mrwind.aloca(nz);
-  dmatval.aloca(nz);
-  ncutt = 0;
-  mstart[0] = 0;
-  for(i=0, z=0, w=0; i<N-1; ++i)
-    for(j=i+1; j<N; ++j)
-      {
-	if( x[i] + x[j] - y[i][j] >= 1+0.0001)
-	  {
-	    //x_i
-	    dmatval[w] = 1;
-	    mrwind[w] = i;
-	    
-	    //x_j
-	    dmatval[++w] = 1;
-	    mrwind[w] = j;
-	    
-	    for(l=0, ad=N; l<i; ++l)
-	      ad += N-l-1;
-	    
-	    //- y_ij
-	    dmatval[++w] = -1;
-	    mrwind[w] = ad + j -i -1;
-	    
-	    mstart[++z] = ++w;
-	    
-	    ncutt++;
-	    
-	  }
-      }
-  
-  if(ncutt > 0)
-    if(XPRSaddcuts(prob, ncutt, &mtype, &qrtype, &rhs, &mstart, &mrwind, &dmatval)) exit(9);
-  
-  ncut += ncutt;
+    int newrow = N*(N-1)/2, nz = N*(N-1), ad, l;
+    qrtype.redefine(newrow, 'L');
+    rhs.redefine(newrow, 1);
+    mstart.aloca(newrow+1);
+    mrwind.aloca(nz);
+    dmatval.aloca(nz);
+    ncutt = 0;
+    mstart[0] = 0;
 
-  return ncut;
+    for(i=0, z=0, w=0; i<N-1; ++i) {
+        for(j=i+1; j<N; ++j) {
+            if( x[i] + x[j] - y[i][j] >= 1+0.0001) {
+                //x_i
+                dmatval[w] = 1;
+                mrwind[w] = i;
+	    
+                //x_j
+                dmatval[++w] = 1;
+                mrwind[w] = j;
+    
+                for(l=0, ad=N; l<i; ++l) ad += N-l-1;
+	    
+                //- y_ij
+                dmatval[++w] = -1;
+                mrwind[w] = ad + j -i -1;
+
+                mstart[++z] = ++w;
+
+                ncutt++;
+	    
+           }
+        }
+    }
+  
+    if(ncutt > 0) {
+        if(XPRSaddcuts(prob, ncutt, &mtype, &qrtype, &rhs, &mstart, &mrwind, &dmatval)) exit(9);
+    }
+  
+    ncut += ncutt;
+
+    return ncut;
   
 }
