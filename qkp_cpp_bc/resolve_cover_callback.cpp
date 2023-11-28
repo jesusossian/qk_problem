@@ -2,139 +2,119 @@ double *bnd;
 char *qbtype;
 int nbnds;
 
-int XPRS_CC cut_manager(XPRSprob prob, void *uobj)
-{
-  double objval, objval_cover;
-  int i, j, k, starttime,  ncut;
-  Array<int> mindex(N), mtype(1,nit), mstart(2), mcols(N);
-  Array<double> obj(N), drhs(1), dmatval(N);
-  int node, card_ext, max;
-  XPRSprob prob_cover;
-  Array<char> qrtype(1,'L');
-  Array<int> mrwind;
-  Array<int> fix;
-  int nCols, nRows;
-  double rcval;
-  int fixanew;
+int XPRS_CC cut_manager(XPRSprob prob, void *uobj) {
+    double objval, objval_cover;
+    int i, j, k, starttime,  ncut;
+    Array<int> mindex(N), mtype(1,nit), mstart(2), mcols(N);
+    Array<double> obj(N), drhs(1), dmatval(N);
+    int node, card_ext, max;
+    XPRSprob prob_cover;
+    Array<char> qrtype(1,'L');
+    Array<int> mrwind;
+    Array<int> fix;
+    int nCols, nRows;
+    double rcval;
+    int fixanew;
 
-  pxpress * probl; 
+    pxpress * probl; 
   
-  starttime = (unsigned long int) clock();
+    starttime = (unsigned long int) clock();
   
-  probl = (pxpress *) uobj;
+    probl = (pxpress *) uobj;
   
-  ++nit;
+    ++nit;
   
-  XPRSgetdblattrib(prob,XPRS_LPOBJVAL,&objval);
-  XPRSgetintattrib(prob, XPRS_NODES, &node);
-  XPRSgetintattrib(prob,XPRS_MIPSTATUS,&xpress_status);
+    XPRSgetdblattrib(prob,XPRS_LPOBJVAL,&objval);
+    XPRSgetintattrib(prob, XPRS_NODES, &node);
+    XPRSgetintattrib(prob,XPRS_MIPSTATUS,&xpress_status);
 
-  if (node > nodeold) itnode = 0;
-  else itnode++;
+    if (node > nodeold) itnode = 0;
+    else itnode++;
 
-  //printf("iteracao: %d, fobj: %f\n", nit, objval);
+    //printf("iteracao: %d, fobj: %f\n", nit, objval);
 
-  if (nit == 1)
-    {
-      boundr = objval;
+    if (nit == 1) {
+        boundr = objval;
     }
   
-  ncut = 0;
-  fixanew = 1;
+    ncut = 0;
+    fixanew = 1;
   
-  if ( (xpress_status==XPRS_MIP_OPTIMAL) || (xpress_status==XPRS_MIP_SOLUTION) )
-   {
-     printf("encontrou solução otima \n");
-     if (XPRSgetlpsol(prob, &xz, NULL, NULL, NULL)) exit(9);
-   }
+    if ( (xpress_status==XPRS_MIP_OPTIMAL) || (xpress_status==XPRS_MIP_SOLUTION) ) {
+       printf("encontrou solução otima \n");
+       if (XPRSgetlpsol(prob, &xz, NULL, NULL, NULL)) exit(9);
+     }
 
-   if (XPRSgetlpsol(prob, &x, NULL, NULL, &cx)) exit(9);
+    if (XPRSgetlpsol(prob, &x, NULL, NULL, &cx)) exit(9);
 
-  if (pr_lp == 1)
-    {
-      for (i=0;i<N;++i)
-	{
-	  printf("x_%d : %.2f  ", i+1, x[i]);
-	}
-      printf("\n");
+    if (pr_lp == 1) {
+        
+        for (i=0;i<N;++i) {
+	          printf("x_%d : %.2f  ", i+1, x[i]);
+	      }
+        printf("\n");
       
-      k = N;
-      for (i=0;i<N-1;++i)
-	{
-	  for (j=0;j<N-i-1;++j,++k)
-	    {
-	      printf("y_%d_%d : %.2f ", i+1, i+j+2, x[k]);
-	    }
-	  printf("\n");
-	}
-      printf("\n");
+        k = N;
+        for (i=0;i<N-1;++i) {
+	          for (j=0;j<N-i-1;++j,++k) {
+	              printf("y_%d_%d : %.2f ", i+1, i+j+2, x[k]);
+	          }
+	          printf("\n");
+	      }
+        printf("\n");
     }
   
-  //if(XPRSdelcuts(prob, 0, NULL, -1, XPRS_MINUSINFINITY, -1, NULL)) exit(9);
-  //if(XPRSdelcpcuts(prob, NULL, -1, -1, NULL)) exit(9);
+    //if(XPRSdelcuts(prob, 0, NULL, -1, XPRS_MINUSINFINITY, -1, NULL)) exit(9);
+    //if(XPRSdelcpcuts(prob, NULL, -1, -1, NULL)) exit(9);
 
-  if (eq_ln == 2)
-    {
-      if (itnode < MAX_ITER_SEP) 
-	ncut += adicionar_bc_lin(prob, mtype, qrtype, drhs, mstart, mrwind, dmatval);
+    if (eq_ln == 2) {
+        if (itnode < MAX_ITER_SEP) ncut += adicionar_bc_lin(prob, mtype, qrtype, drhs, mstart, mrwind, dmatval);
     }
   
-  if ((eq_trig0 == 2) || (eq_trig1 == 2))
-    {
-      if (itnode < MAX_ITER_SEP) 
-	ncut += adicionar_bc_tri(prob, mtype, qrtype, drhs, mstart, mrwind, dmatval);
+    if ((eq_trig0 == 2) || (eq_trig1 == 2)) {
+        if (itnode < MAX_ITER_SEP) ncut += adicionar_bc_tri(prob, mtype, qrtype, drhs, mstart, mrwind, dmatval);
     }
   
-  if ((eq_cover == 1) || (eq_extender == 1) || (eq_lift == 1) || (eq_cquad == 1) || (eq_equad == 1) || (eq_lquad == 1))
-    {
-      objval_cover = separacao_cover(probl);
+    if ((eq_cover == 1) || (eq_extender == 1) || (eq_lift == 1) || (eq_cquad == 1) || (eq_equad == 1) || (eq_lquad == 1)) {
+        objval_cover = separacao_cover(probl);
       
-      if (objval_cover <= 1-0.0001)
-	{
-
-	  if (eq_cover == 1)
-	    {
-	      if (itnode < MAX_ITER_SEP) 
-		ncut += adicionar_bc_cover(prob, mtype, qrtype, drhs, mstart, objval_cover, mcols, dmatval);
-	    }
+        if (objval_cover <= 1-0.0001) {
+	          if (eq_cover == 1) {
+	              if (itnode < MAX_ITER_SEP) 
+		                ncut += adicionar_bc_cover(prob, mtype, qrtype, drhs, mstart, objval_cover, mcols, dmatval);
+	          }
 	  
-	  if (eq_extender == 1)
-	    {
-	      if (itnode < MAX_ITER_SEP)
-		ncut += adicionar_bc_extender(prob, mtype, qrtype, drhs, mstart, objval_cover, mcols, dmatval);//extended
-	    }
+	      if (eq_extender == 1) {
+	          if (itnode < MAX_ITER_SEP)
+		            ncut += adicionar_bc_extender(prob, mtype, qrtype, drhs, mstart, objval_cover, mcols, dmatval);//extended
+	      }
 	  
-	  if (eq_lift == 1)
-	    {
-	      if (itnode < MAX_ITER_SEP)
-		ncut += adicionar_bc_lift(prob, mtype, qrtype, drhs, mstart, objval_cover, mcols, dmatval, probl);
-	    }
+	      if (eq_lift == 1) {
+	          if (itnode < MAX_ITER_SEP)
+		            ncut += adicionar_bc_lift(prob, mtype, qrtype, drhs, mstart, objval_cover, mcols, dmatval, probl);
+	      }
 	  
-	  if (eq_cquad == 1)
-	    {
-	      if (itnode < MAX_ITER_SEP)
-		ncut += adicionar_bc_cover_quad(prob, mtype, qrtype, drhs, mstart, objval_cover, mcols, dmatval);
-	    }
+	      if (eq_cquad == 1) {
+	          if (itnode < MAX_ITER_SEP)
+		            ncut += adicionar_bc_cover_quad(prob, mtype, qrtype, drhs, mstart, objval_cover, mcols, dmatval);
+	      }
 	  
-	  if (eq_equad == 1)
-	    {
-	      if (itnode < MAX_ITER_SEP)
-		ncut += adicionar_bc_extender_quad(prob, mtype, qrtype, drhs, mstart, objval_cover, mcols, dmatval);
-	    }
+	      if (eq_equad == 1) {
+	          if (itnode < MAX_ITER_SEP)
+		        ncut += adicionar_bc_extender_quad(prob, mtype, qrtype, drhs, mstart, objval_cover, mcols, dmatval);
+	      }
 	  
-	  if (eq_lquad == 1)
-	    {
-	      if (itnode < MAX_ITER_SEP)
-		ncut += adicionar_bc_lift_quad(prob, mtype, qrtype, drhs, mstart, objval_cover, mcols, dmatval, probl);
-	    }
-	}
+	      if (eq_lquad == 1) {
+	          if (itnode < MAX_ITER_SEP)
+		            ncut += adicionar_bc_lift_quad(prob, mtype, qrtype, drhs, mstart, objval_cover, mcols, dmatval, probl);
+	      }
+	  }
       
-      if (pr_lp == 1)
-	{
-	  XPRSwriteprob(prob, "qknapsack_branch_cut", "l");
-	}
+    if (pr_lp == 1) {
+	      XPRSwriteprob(prob, "qknapsack_branch_cut", "l");
+	  }
   
-    }
+  }
 
   // printf("onode %d node %d itnode %d -> ", nodeold, node, itnode);
 

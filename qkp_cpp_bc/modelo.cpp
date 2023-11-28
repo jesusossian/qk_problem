@@ -284,325 +284,304 @@ void modelo(XPRSprob prob) {
     //printf("modelo - depois de alocar 9\n");
   
     if(eq_trig0 == 1) {
-      newrow = N*(N-1)*(N-2)/2;
-      nz = 2*N*(N-1)*(N-2);
-      printf("Triangular 0 - Newrow: %d NewNonZero: %d \n", newrow, nz);
-      qrtype.redefine(newrow, 'L');
-      rhs.redefine(newrow, 0);
-      mstart.aloca(newrow);
-      mrwind.aloca(nz);
-      dmatval.aloca(nz);
+        newrow = N*(N-1)*(N-2)/2;
+        nz = 2*N*(N-1)*(N-2);
+        printf("Triangular 0 - Newrow: %d NewNonZero: %d \n", newrow, nz);
+        qrtype.redefine(newrow, 'L');
+        rhs.redefine(newrow, 0);
+        mstart.aloca(newrow);
+        mrwind.aloca(nz);
+        dmatval.aloca(nz);
       
-      for(i=0, z=0, w=0; i<N-2; ++i)
-	for(j=i+1; j<N-1; ++j)
-	  for(k=j+1; k<N; ++k)
-	    {
-	      mstart[z] = w;
-	      
-	      //-x_i
-	      dmatval[w] = -1;
-	      mrwind[w] = i;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (5)\n", w, mrwind[w]);
-		  exit(0);
-		}
-	      
-	      for(l=0, ad=N; l<i; ++l)
-		ad += N-l-1;
-	      
-	      // + y_ij
-	      dmatval[++w] = 1;
-	      mrwind[w] = ad + j -i -1;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (5)\n", w, mrwind[w]);
-		  exit(0);
-		}
-	      
-	      // + y_ik
-	      dmatval[++w] = 1;
-	      mrwind[w] = ad + k -i -1;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (5)\n", w, mrwind[w]);
-		  exit(0);
-		}
-	      
-	      for(l=0, ad=N; l<j; ++l)
-		ad += N-l-1;
-	      
-	      // - y_jk
-	      dmatval[++w] = -1;
-	      mrwind[w] = ad + k -j -1;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (5)\n", w, mrwind[w]);
-		  exit(0);
-		}
-	      
-	      //++w; ++z;
-	      mstart[++z] = ++w;
-	      
-	      //-x_j
-	      dmatval[w] = -1;
-	      mrwind[w] = j;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (6)\n", w, mrwind[w]);
-		  exit(0);
-		}
-	      
-	      for(l=0, ad=N; l<i; ++l)
-		ad += N-l-1;
+        for(i=0, z=0, w=0; i<N-2; ++i) {
+            for(j=i+1; j<N-1; ++j) {
+                for(k=j+1; k<N; ++k) {
+                    mstart[z] = w;
+      
+                    //-x_i
+                    dmatval[w] = -1;
+                    mrwind[w] = i;
+                    
+					if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+                        printf("Erro - mrwind[%d] invalido %d (5)\n", w, mrwind[w]);
+                        exit(0);
+                    }
 
-	      // + y_ij
-	      dmatval[++w] = 1;
-	      mrwind[w] = ad + j -i -1;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (6)\n", w, mrwind[w]);
-		  exit(0);
-		}
+                    for(l=0, ad=N; l<i; ++l) ad += N-l-1;
 	      
-	      // - y_ik
-	      dmatval[++w] = -1;
-	      mrwind[w] = ad + k -i -1;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (6)\n", w, mrwind[w]);
-		  exit(0);
-		}
+                    // + y_ij
+                    dmatval[++w] = 1;
+                    mrwind[w] = ad + j -i -1;
+                    
+					if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+                        printf("Erro - mrwind[%d] invalido %d (5)\n", w, mrwind[w]);
+                        exit(0);
+                    }
+
+                    // + y_ik
+                    dmatval[++w] = 1;
+                    mrwind[w] = ad + k -i -1;
 	      
-	      for(l=0, ad=N; l<j; ++l)
-		ad += N-l-1;
-	      
-	      // + y_jk
-	      dmatval[++w] = 1;
-	      mrwind[w] = ad + k -j -1;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (6)\n", w, mrwind[w]);
-		  exit(0);
-		}
-	      
-	      mstart[++z] = ++w;
-	      
-	      //-x_k
-	      dmatval[w] = -1;
-	      mrwind[w] = k;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (7)\n", w, mrwind[w]);
-		  exit(0);
-		}
-	      
-	      for(l=0, ad=N; l<i; ++l)
-		ad += N-l-1;
-	      
-	      // - y_ij
-	      dmatval[++w] = -1;
-	      mrwind[w] = ad + j -i -1;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (7)\n", w, mrwind[w]);
-		  exit(0);
-		}
-	      
-	      // + y_ik
-	      dmatval[++w] = 1;
-	      mrwind[w] = ad + k -i -1;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (7)\n", w, mrwind[w]);
-		  exit(0);
-		}
-	      
-	      for(l=0, ad=N; l<j; ++l)
-		ad += N-l-1;
-	      
-	      // + y_jk
-	      dmatval[++w] = 1;
-	      mrwind[w] = ad + k -j -1;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (7)\n", w, mrwind[w]);
-		  exit(0);
-		}
-	      ++w; ++z;
-	    }
+                    if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+                        printf("Erro - mrwind[%d] invalido %d (5)\n", w, mrwind[w]);
+                        exit(0);
+                    }
       
-      if(z != newrow)
-	{
-	  printf("Erro - newrow nao bate %d %d (1)\n", newrow, z);
-	  exit(0);
-	}
+                    for(l=0, ad=N; l<j; ++l) ad += N-l-1;
       
-      if(w != nz)
-	{
-	  printf("Erro - nz nao bate %d %d (1)\n", nz, w);
-	  exit(0);
-	}
+                    // - y_jk
+                    dmatval[++w] = -1;
+                    mrwind[w] = ad + k -j -1;
       
-      if(XPRSaddrows(prob, newrow, nz, &qrtype, &rhs, NULL, &mstart, &mrwind, &dmatval)) exit(9);
+	                if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+                        printf("Erro - mrwind[%d] invalido %d (5)\n", w, mrwind[w]);
+                        exit(0);
+					}
+	      
+                    //++w; ++z;
+                    mstart[++z] = ++w;
       
-      printf("Adicinou a restricao Triangular < 0 \n");
-      
-      cnames.aloca(newrow*((nl+1)*8+1));
-      
-      for(i=0, w=0; i<N-2; ++i)
-	for(j=i+1; j<N-1; ++j)
-	  for(k=j+1; k<N; ++k)
-	    {
-	      strcpy(var, "tr0_");
-	      strcat(var, itoa(i+1));
-	      strcat(var,"_");
-	      strcat(var, itoa(j+1));
-	      strcat(var,"_");
-	      strcat(var, itoa(k+1));
-	      strcpy(&cnames[w], var);
-	      w += strlen(var)+1;
-	      strcpy(var, "tr0_");
-	      strcat(var, itoa(j+1));
-	      strcat(var,"_");
-	      strcat(var, itoa(i+1));
-	      strcat(var,"_");
-	      strcat(var, itoa(k+1));
-	      strcpy(&cnames[w], var);
-	      w += strlen(var)+1;
-	      strcpy(var, "tr0_");
-	      strcat(var, itoa(k+1));
-	      strcat(var,"_");
-	      strcat(var, itoa(i+1));
-	      strcat(var,"_");
-	      strcat(var, itoa(j+1));
-	      strcpy(&cnames[w], var);
-	      w += strlen(var)+1;
-	    }
-      
-      //printf("modelo - depois de alocar 6\n");
-      XPRSaddnames(prob, 1, &cnames, nrow, nrow + newrow -1); 
-      
-      nrow += newrow;
-    }// if(eq_trig0 == 1)
+                    //-x_j
+                    dmatval[w] = -1;
+                    mrwind[w] = j;
+	      
+                    if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+                        printf("Erro - mrwind[%d] invalido %d (6)\n", w, mrwind[w]);
+                        exit(0);
+                    }
+					
+					for(l=0, ad=N; l<i; ++l) ad += N-l-1;
+
+                    // + y_ij
+                    dmatval[++w] = 1;
+                    mrwind[w] = ad + j -i -1;
+	      
+                    if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+                        printf("Erro - mrwind[%d] invalido %d (6)\n", w, mrwind[w]);
+                        exit(0);
+                    }
+	      
+                    // - y_ik
+					dmatval[++w] = -1;
+                    mrwind[w] = ad + k -i -1;
+                    if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+                        printf("Erro - mrwind[%d] invalido %d (6)\n", w, mrwind[w]);
+                        exit(0);
+                    }
   
-  if(eq_trig1 == 1)
-    {
-      newrow = N*(N-1)*(N-2)/6;
-      nz = N*(N-1)*(N-2);
-      printf("Triangular 1 - Newrow: %d NewNonZero: %d \n", newrow, nz);
-      qrtype.redefine(newrow, 'L');
-      rhs.redefine(newrow, 1);
-      mstart.aloca(newrow);
-      mrwind.aloca(nz);
-      dmatval.aloca(nz);
-      
-      for(i=0, z=0, w=0; i<N-2; ++i)
-	for(j=i+1; j<N-1; ++j)
-	  for(k=j+1; k<N; ++k)
-	    {
-	      mstart[z] = w;
+                    for(l=0, ad=N; l<j; ++l) ad += N-l-1;
 	      
-	      //x_i
-	      dmatval[w] = 1;
-	      mrwind[w] = i;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (8)\n", w, mrwind[w]);
-		  exit(0);
+                    // + y_jk
+                    dmatval[++w] = 1;
+                    mrwind[w] = ad + k -j -1;
+                    if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+                        printf("Erro - mrwind[%d] invalido %d (6)\n", w, mrwind[w]);
+                        exit(0);
+					}
+					
+					mstart[++z] = ++w;
+	      
+					//-x_k
+					dmatval[w] = -1;
+					mrwind[w] = k;
+					if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+						printf("Erro - mrwind[%d] invalido %d (7)\n", w, mrwind[w]);
+						exit(0);
+					}
+					
+					for(l=0, ad=N; l<i; ++l) ad += N-l-1;
+	      
+					// - y_ij
+					dmatval[++w] = -1;
+					mrwind[w] = ad + j -i -1;
+					if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+						printf("Erro - mrwind[%d] invalido %d (7)\n", w, mrwind[w]);
+						exit(0);
+					}
+
+					// + y_ik
+					dmatval[++w] = 1;
+					mrwind[w] = ad + k -i -1;
+					if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+						printf("Erro - mrwind[%d] invalido %d (7)\n", w, mrwind[w]);
+						exit(0);
+					}
+	      
+	    			for(l=0, ad=N; l<j; ++l) ad += N-l-1;
+	      
+	    			// + y_jk
+	    			dmatval[++w] = 1;
+	    			mrwind[w] = ad + k -j -1;
+	    			if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+						printf("Erro - mrwind[%d] invalido %d (7)\n", w, mrwind[w]);
+						exit(0);
+					}
+	    			++w; ++z;
+	    		}
+			}
 		}
-	      
-	      //x_j
-	      dmatval[++w] = 1;
-	      mrwind[w] = j;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (8)\n", w, mrwind[w]);
-		  exit(0);
+      
+    	if(z != newrow) {
+			printf("Erro - newrow nao bate %d %d (1)\n", newrow, z);
+			exit(0);
 		}
-	      
-	      //x_k
-	      dmatval[++w] = 1;
-	      mrwind[w] = k;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (8)\n", w, mrwind[w]);
-		  exit(0);
+      
+    	if(w != nz) {
+			printf("Erro - nz nao bate %d %d (1)\n", nz, w);
+			exit(0);
 		}
-	      
-	      for(l=0, ad=N; l<i; ++l)
-		ad += N-l-1;
-	      
-	      // - y_ij
-	      dmatval[++w] = -1;
-	      mrwind[w] = ad + j -i -1;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (8)\n", w, mrwind[w]);
-		  exit(0);
+      
+    	if(XPRSaddrows(prob, newrow, nz, &qrtype, &rhs, NULL, &mstart, &mrwind, &dmatval)) exit(9);
+      
+    	printf("Adicinou a restricao Triangular < 0 \n");
+      
+    	cnames.aloca(newrow*((nl+1)*8+1));
+      
+    	for(i=0, w=0; i<N-2; ++i)
+			for(j=i+1; j<N-1; ++j)
+				for(k=j+1; k<N; ++k) {
+					strcpy(var, "tr0_");
+					strcat(var, itoa(i+1));
+	    			strcat(var,"_");
+	    			strcat(var, itoa(j+1));
+	    			strcat(var,"_");
+	    			strcat(var, itoa(k+1));
+	    			strcpy(&cnames[w], var);
+	    			w += strlen(var)+1;
+	    			strcpy(var, "tr0_");
+	    			strcat(var, itoa(j+1));
+	    			strcat(var,"_");
+	    			strcat(var, itoa(i+1));
+	    			strcat(var,"_");
+	    			strcat(var, itoa(k+1));
+	    			strcpy(&cnames[w], var);
+	    			w += strlen(var)+1;
+	    			strcpy(var, "tr0_");
+	    			strcat(var, itoa(k+1));
+	    			strcat(var,"_");
+	    			strcat(var, itoa(i+1));
+	    			strcat(var,"_");
+	    			strcat(var, itoa(j+1));
+	    			strcpy(&cnames[w], var);
+	    			w += strlen(var)+1;
+	    		}
+			}
 		}
-	      
-	      // - y_ik
-	      dmatval[++w] = -1;
-	      mrwind[w] = ad + k -i -1;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (8)\n", w, mrwind[w]);
-		  exit(0);
-		}
-	      
-	      for(l=0, ad=N; l<j; ++l)
-		ad += N-l-1;
-	      
-	      // - y_jk
-	      dmatval[++w] = -1;
-	      mrwind[w] = ad + k -j -1;
-	      if(mrwind[w] < 0 || mrwind[w] >= ncol)
-		{
-		  printf("Erro - mrwind[%d] invalido %d (5)\n", w, mrwind[w]);
-		  exit(0);
-		}
-	      
-	      ++w; ++z;
-	    }
       
-      if(z != newrow)
-	{
-	  printf("Erro - newrow nao bate %d %d (2)\n", newrow, z);
-	  exit(0);
-	}
+    	//printf("modelo - depois de alocar 6\n");
+    	XPRSaddnames(prob, 1, &cnames, nrow, nrow + newrow -1); 
       
-      if(w != nz)
-	{
-	  printf("Erro - nz nao bate %d %d (2)\n", nz, w);
-	  exit(0);
-	}
-      
-      if(XPRSaddrows(prob, newrow, nz, &qrtype, &rhs, NULL, &mstart, &mrwind, &dmatval)) exit(9);
-      
-      printf("Adicinou a restricao Triangular < 1 \n");
-      
-      cnames.aloca(newrow*((nl+1)*8+1));
-      
-      for(i=0, w=0; i<N-2; ++i)
-	for(j=i+1; j<N-1; ++j)
-	  for(k=j+1; k<N; ++k)
-	    {
-	      strcpy(var, "tr1_");
-	      strcat(var, itoa(i+1));
-	      strcat(var,"_");
-	      strcat(var, itoa(j+1));
-	      strcat(var,"_");
-	      strcat(var, itoa(k+1));
-	      strcpy(&cnames[w], var);
-	      w += strlen(var)+1;
-	    }
-      
-      //printf("modelo - depois de alocar 7\n");
-      XPRSaddnames(prob, 1, &cnames, nrow, nrow + newrow -1); 
-    }// if(eq_trig == 1)
+    	nrow += newrow;
+	
+	} // if(eq_trig0 == 1)
   
-  if(pr_lp)
-    XPRSwriteprob(prob,"qknapsck","l");
+	if(eq_trig1 == 1) {
+		newrow = N*(N-1)*(N-2)/6;
+		nz = N*(N-1)*(N-2);
+		printf("Triangular 1 - Newrow: %d NewNonZero: %d \n", newrow, nz);
+		qrtype.redefine(newrow, 'L');
+		rhs.redefine(newrow, 1);
+		mstart.aloca(newrow);
+		mrwind.aloca(nz);
+		dmatval.aloca(nz);
+      
+		for(i=0, z=0, w=0; i<N-2; ++i) {	
+			for(j=i+1; j<N-1; ++j) {
+				for(k=j+1; k<N; ++k) {
+					mstart[z] = w;
+
+					//x_i
+					dmatval[w] = 1;
+					mrwind[w] = i;
+					if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+						printf("Erro - mrwind[%d] invalido %d (8)\n", w, mrwind[w]);
+						exit(0);
+					}
+	      
+					//x_j
+					dmatval[++w] = 1;
+					mrwind[w] = j;
+					if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+						printf("Erro - mrwind[%d] invalido %d (8)\n", w, mrwind[w]);
+						exit(0);
+					}
+
+					//x_k
+					dmatval[++w] = 1;
+					mrwind[w] = k;
+	    			if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+						printf("Erro - mrwind[%d] invalido %d (8)\n", w, mrwind[w]);
+						exit(0);
+					}
+	      
+	    			for(l=0, ad=N; l<i; ++l) ad += N-l-1;
+
+					// - y_ij
+					dmatval[++w] = -1;
+					mrwind[w] = ad + j -i -1;
+					if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+						printf("Erro - mrwind[%d] invalido %d (8)\n", w, mrwind[w]);
+						exit(0);
+					}
+ 
+					// - y_ik
+					dmatval[++w] = -1;
+					mrwind[w] = ad + k -i -1;
+					if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+						printf("Erro - mrwind[%d] invalido %d (8)\n", w, mrwind[w]);
+						exit(0);
+					}
+	
+					for(l=0, ad=N; l<j; ++l) ad += N-l-1;
+	      
+	    			// - y_jk
+	    			dmatval[++w] = -1;
+	    			mrwind[w] = ad + k -j -1;
+	    			if(mrwind[w] < 0 || mrwind[w] >= ncol) {
+						printf("Erro - mrwind[%d] invalido %d (5)\n", w, mrwind[w]);
+						exit(0);
+					}
+
+	    			++w; ++z;
+				}
+			}
+	    }
+
+		if(z != newrow) {
+			printf("Erro - newrow nao bate %d %d (2)\n", newrow, z);
+			exit(0);
+		}
+		
+		if(w != nz) {
+			printf("Erro - nz nao bate %d %d (2)\n", nz, w);
+			exit(0);
+		}
+		
+		if(XPRSaddrows(prob, newrow, nz, &qrtype, &rhs, NULL, &mstart, &mrwind, &dmatval)) exit(9);
+		
+		printf("Adicinou a restricao Triangular < 1 \n");
+		
+		cnames.aloca(newrow*((nl+1)*8+1));
+      
+		for(i=0, w=0; i<N-2; ++i) {
+			for(j=i+1; j<N-1; ++j) {
+				for(k=j+1; k<N; ++k) {
+					strcpy(var, "tr1_");
+					strcat(var, itoa(i+1));
+					strcat(var,"_");
+					strcat(var, itoa(j+1));
+					strcat(var,"_");
+					strcat(var, itoa(k+1));
+					strcpy(&cnames[w], var);
+					w += strlen(var)+1;
+				}
+			}
+		}
+		
+		//printf("modelo - depois de alocar 7\n");
+		XPRSaddnames(prob, 1, &cnames, nrow, nrow + newrow -1); 
+	}// if(eq_trig == 1)
+
+	if(pr_lp) XPRSwriteprob(prob,"qknapsck","l");
 
 }
